@@ -1,6 +1,15 @@
+// App.js
+// Root of the application
+
+// External Packages
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+// Internal Modules and files
+import '../App.css';
+// Containers
+import LoginContainer from './LoginContainer';
+// Styled Components
+import MainAppWrapper from '../styledComponents/MainAppWrapper';
+
 
 class App extends Component {
 
@@ -10,7 +19,6 @@ class App extends Component {
       response: ''
     }
   }
-
 
   componentDidMount() {
     this.callBackend()
@@ -24,30 +32,15 @@ class App extends Component {
     const response = await fetch('/api/ping');
     console.log('response', response);
     // const body = await response.json();
-
     // if (response.status !== 200) throw Error(body.message);
-
     // return body;
   };
 
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
+      <MainAppWrapper>
+        <LoginContainer />
+      </MainAppWrapper>
     );
   }
 
