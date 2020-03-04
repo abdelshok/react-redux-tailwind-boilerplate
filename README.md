@@ -1,68 +1,27 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Create Spotify App
 
-## Available Scripts
+> A web app to serve as the foundation of your full-stack project with a React and Styled Components front-end, a Node.js / Express back-end, and Spotify authentication already set up.
 
-In the project directory, you can run:
+In order to make it a full-stack application with a functioning front and back-end, these technologies were used:
 
-### `yarn start`
+- [Spotify Web API](https://developer.spotify.com/documentation/web-api/)
+- [Create React App](https://github.com/facebook/create-react-app)
+- [Express](https://expressjs.com/)
+- [Styled Components](https://www.styled-components.com/)
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+## Idea ⛩
 
-### `yarn test`
+I created this app after realizing that some of the guides to create a web app using the Spotify API were antiquated and didn't provide a good enough starting point for web developers on the front and back-end.
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+On the front-end, React is used in conjunction with Styled-Components in order to provide a small but core component library that users can re-use in the application, remove, or build upon. 
 
-### `yarn build`
+On the back-end, Express and Node modules such as the cluster module are configured in order to maximize security, improve efficiency, and, in reference to the cluster module, take advantage of multi-core systems and handle a lot of traffic on your server.
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Setup 🥊
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+1. [Create a Spotify App](https://developer.spotify.com/dashboard/applications) and add `http://localhost:8080/callback` as a Redirect URI in the app settings after you've registered it
+2. Create an `.env` file in the root of the which will hold all of your secret user credentials. (An example you can copy/paste is in the config.js file in the root)
+3. Move to the server folder and `node server.js`
+4. Stay in the root folder and `npm start`
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `yarn eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `yarn build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
