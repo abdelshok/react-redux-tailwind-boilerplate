@@ -9,6 +9,7 @@ import LoginWrapper from '../styledComponents/LoginWrapper';
 import AnimatedText from '../styledComponents/AnimatedText';
 import SmallHeaderText from '../styledComponents/SmallHeaderText';
 import SpotifyButton from '../styledComponents/SpotifyButton';
+import TextVideoComponent from '../components/TextVideoComponent';
 
 class LoginContainer extends Component {
 
@@ -20,7 +21,7 @@ class LoginContainer extends Component {
     render() {
         return (
             <LoginWrapper>
-            <AnimatedText> SoundHound </AnimatedText>
+            <AnimatedText> Spotify API </AnimatedText>
             <SmallHeaderText> Fullstack skeleton for your Spotify-API-based applications </SmallHeaderText>
             <SpotifyButton> Login </SpotifyButton>
             </LoginWrapper>    

@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 const MainAppWrapper = styled.div`
     width: 100%;
-    height: 700px;
+    height: 100%;
     background-color: white;
     border-style: solid;
     border-width: 10px;

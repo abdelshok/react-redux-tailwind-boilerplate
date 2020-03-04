@@ -1,4 +1,5 @@
-// Styling for Animated Text
+// Styling for Animated Text displayed on the /login page "Spotify API"
+// May later have an animated video in the background
 
 import styled, { keyframes } from 'styled-components';
 
