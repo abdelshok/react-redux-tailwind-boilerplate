@@ -16,7 +16,7 @@ I created this app after realizing that some of the guides to create a web app u
 
 On the front-end, React is used in conjunction with Styled-Components in order to provide a small but core component library that users can re-use in the application, remove, or build upon. 
 
-On the back-end, Express and Node modules such as the cluster module are configured in order to maximize security, improve efficiency, and, in reference to the cluster module, take advantage of multi-core systems and handle a lot of traffic on your server.
+On the back-end, Express and Node modules such as the cluster module are configured in order to maximize security, improve efficiency, and, in reference to the cluster module, take advantage of multi-core systems and handle heavy loads of traffic on the server.
 
 ## Setup 🥊
 

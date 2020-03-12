@@ -20,22 +20,6 @@ class App extends Component {
     }
   }
 
-  componentDidMount() {
-    this.callBackend()
-      .then(res => { 
-        console.log('response from express', res);
-      })
-      .catch(err => console.log(err));
-  }
-
-  callBackend = async () => {
-    const response = await fetch('/api/ping');
-    console.log('response', response);
-    // const body = await response.json();
-    // if (response.status !== 200) throw Error(body.message);
-    // return body;
-  };
-
   render() {
     return (
       <MainAppWrapper>
