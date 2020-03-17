@@ -19,7 +19,7 @@ Now, it is also important to note that this boilerplate is for one type of proje
 
 The Spotify API has [three types of authorization flows](https://developer.spotify.com/documentation/general/guides/authorization-guide/) you can use depending on what kind of project you want to create.
 
-- The **Client Credentials Flow** is used typically between a server and the Spotify API directly. It is used by clients to obtain an access token outside of the context of a user. Typically, it is used by clients to access resources about themselves.
+- The **Client Credentials Flow** is used typically between a server and the Spotify API directly. It is used by clients to obtain an access token outside of the context of a user. Typically, it can be used by clients to access resources about themselves.
 - The **Authorization Code Flow** is used if you want to create a long-running application (that requires user permissions only once) with a back-end service, which can be Node.js or otherwise. I can see this being useful if someone wants to create a mobile application using the Spotify API. Users only need to authenticate once and can keep using the application unbothered as the permission tokens get continuously refreshed (read more about it in the above documentation).
 
 In this case, I implemented the **Implicit Grant Flow**, which has two characteristics:

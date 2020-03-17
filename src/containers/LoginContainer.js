@@ -16,6 +16,11 @@ import SmallHeaderText from '../styledComponents/SmallHeaderText';
 import SpotifyButton from '../styledComponents/SpotifyButton';
 import TextVideoComponent from '../components/TextVideoComponent';
 
+// Utility Functions
+import SpotifyAPI from '../utilityLibrary/spotify';
+
+let spotify;
+
 // Change the Login URI so that the domain is chosen depending on the
 // environment that we're in, production and development
 
@@ -42,6 +47,8 @@ class LoginContainer extends Component {
         if (hashParams.access_token) {
             this.authenticateUser(true)
             this.getUserSpotifyInfo(hashParams.access_token)
+            spotify = new SpotifyAPI(hashParams.access_token)
+            spotify.getNewReleases(2, undefined, undefined)
         }
     }
 
