@@ -2,6 +2,13 @@
 
 import axios from 'axios';
 
+// TO DO:
+// Check every function works correctly with and without all the parameters.
+// See if there's any way to do function overloading to avoid having to call function with undefined
+// Fix "Important issue"
+// Document each function's params, restrictions, and add link to spotify web api
+// Maybe add error logging if values are incorrect? 
+
 class SpotifyAPI {
     constructor(accessToken) {
         this.accessToken = accessToken
@@ -223,6 +230,91 @@ class SpotifyAPI {
         }
         return artistData;
     }
+
+    // Include-groups is a comma separated list of keywords that are used to filter the response
+    // if not supplied, all album types will be returned. Valid values are: "album", "single", "appears_on",
+    // "compilation"
+    getArtistAlbums = async (artistID, includeGroups, country, limit, offset) => {
+        let artistAlbums;
+        let bodyParam = {
+            include_groups: includeGroups, 
+            country: country,
+            limit: limit,
+            offset: offset
+        }
+        try {
+            let url =  'https://api.spotify.com/v1/artists' + artistID + '/albums';
+            artistAlbums = await axios.get(url, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.accessToken
+                },
+                params: bodyParam
+            })
+        } catch(error) {
+            console.error('Error caught in the getArtistAlbums function', error);
+        }
+        return artistAlbums;
+    }
+
+    // Important : change bodyParam to queryParam
+    getArtistTopTracks = async (artistID, country) => {
+        let artistTopTracks;
+        let queryParam = {
+            country: country
+        }
+        try {
+            let url =  'https://api.spotify.com/v1/artists' + artistID + '/top-tracks';
+            artistTopTracks = await axios.get(url, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.accessToken
+                },
+                params: queryParam
+            })
+        } catch(error) {
+            console.error('Error caught in the getArtistTopTracks function', error);
+        }
+        return artistTopTracks;
+    }
+
+    // https://developer.spotify.com/documentation/web-api/reference/artists/get-related-artists/
+    getRelatedArtists = async (artistID) => {
+        let relatedArtists;
+        try {
+            let url =  'https://api.spotify.com/v1/artists' + artistID + '/related-artists';
+            relatedArtists = await axios.get(url, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.accessToken
+                }
+            })
+        } catch(error) {
+            console.error('Error caught in the getRelatedArtists function', error);
+        }
+        return relatedArtists;
+    }
+
+    // https://developer.spotify.com/documentation/web-api/reference/artists/get-several-artists/
+    // Important: or getArtists 
+    // ids: comma-sepaarated list of the Spotify-IDs for the artsits. MAximum 50 IDs.
+    getSeveralArtists = async (artistIDs) => {
+        let artistsData;
+        let queryParam = {
+            ids: artistIDs
+        }
+
+        try {
+            let url =  'https://api.spotify.com/v1/artists';
+            artistsData = await axios.get(url, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.accessToken
+                },
+                params: queryParam
+            })
+        } catch(error) {
+            console.error('Error caught in the getSeveralArtists function', error);
+        }
+        return artistsData;
+    }
+
     
 }
 
