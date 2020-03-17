@@ -26,56 +26,28 @@ class SpotifyAPI {
     // The server cannot and will not process the request due to something perceived
     // as an error on the client side (e.g., malformed request syntax, etc.)
 
+    //
+    // Retrieves New Releases
+    // @params {integer} (optional) limit: number of releases to be retrieved. default: 20, min: 1, max: 50.
+    // @params {string} (optional) country: an ISO 3166-1 alpha-2 country code. 
+    // @params {integer} (optional) offset: the index of the first item to return. Default: 0
+    // @example: 
+    // .getNewReleases(10) --> Returns 10 first newest releases for all countries <=> equivalent to .getNewReleases(10, undefined, undefinded)
+    // .getNewReleases(undefined, 'FR', 10) --> Gets top 10-30 newest track for France (ISO code: "FR")
+    // .getNewReleases(10, undefined, 10) --> Gets # 10 to 20 newest release all over the world (10 is limit and offset is 10 so we start at track 10)
+    // @returns An object newReleases containing the newest releases if the call to the API is successful 
+    // 
     getNewReleases = async (limit, country, offset) => {
         
         try {
             let newReleases;
 
-            // if (!isString(country) || !Number.isInteger(limit) || !Number.isInteger(offset) ) {
-            //     throw "Input type not valid"
-            // }
-    
             let paramObject = {
                 country: country,
                 limit: limit,
                 offset: offset,
             }
-            // if (limit == undefined && country == undefined && offset == undefined) {
-            //     paramObject = {};
-            // } else if (limit != undefined && country == undefined && offset == undefined) {
-            //     paramObject = {
-            //         limit: limit
-            //     };
-            // } else if (limit == undefined && country != undefined && offset == undefined) {
-            //     paramObject = {
-            //         country: country
-            //     };
-            // } else if (limit == undefined && country == undefined && offset != undefined) {
-            //     paramObject = {
-            //         offset: offset
-            //     };
-            // } else if (limit != undefined && country != undefined && offset == undefined) {
-            //     paramObject = {
-            //         limit: limit,
-            //         country: country
-            //     };
-            // } else if (limit != undefined && country == undefined && offset != undefined) {
-            //     paramObject = {
-            //         limit: limit,
-            //         offset: offset
-            //     };
-            // } else if (limit == undefined && country != undefined && offset != undefined) {
-            //     paramObject = {
-            //         country: country,
-            //         offset: offset
-            //     }
-            // } else if (limit != undefined && country != undefined && offset != undefined) {
-            //     paramObject = {
-            //         country: country,
-            //         offset: offset,
-            //         limit: limit
-            //     }
-            // }
+   
     
             try {
                 let url = 'https://api.spotify.com/v1/browse/new-releases'
@@ -96,13 +68,65 @@ class SpotifyAPI {
 
     }
 
-    // Get Recommendations
-    // Might add more attributes
-    getRecommendations = async (limit, market) => {
+    // 
+    // Retrieve list of Spotify featuerd playlists
+    // @params {string} (optional) locale: desired language as lowercase ISO 639-1 language code & uppercase ISO 3166-1 alpha-2
+    // country code. e.g. es_MX --> "Spanish (Mexico)"
+    // @params {string} (optional) country: ISO 3166-1 alpha-2 country code. if you want a list
+    // of returned items to be relevant to a particular country. e.g. "FR"
+    // @params {string} (optional) timestamp: ISO 8601 format --> yyyy-MM--ddTHH:mm:ss to get results
+    // tailed for that specific time and day
+    // @params {integer} (optional) limit: max num of items to return. default: 20, min: 1, max: 50.
+    // @params {integer} (optional) offset: index of first item to return. default 0.
+    // @returns object featuredPlaylists containing all the necessary data :)
+    //
+    getFeaturedPlaylists = async (locale, country, timestamp, limit, offset) => {
+        let featuredPlaylists;
+
+        let paramObject = {
+            locale: locale,
+            country: country,
+            timestamp: timestamp,
+            limit: limit,
+            offset: offset,
+        }
+
+        try {
+            let url = 'https://api.spotify.com/v1/browse/featured-playlists';
+            featuredPlaylists = await axios.get(url, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.accessToken
+                },
+                params: paramObject
+            })
+        } catch (error) {
+            console.error('Error returned from Spotify-API in getFeaturedPlaylists function', error);
+        }
+        console.log('New releases are', featuredPlaylists);
+        return featuredPlaylists; 
+
+    }
+
+    // Important: add max_*, min_*, etc?
+
+    // Get Recommendations from Seed Data: https://developer.spotify.com/documentation/web-api/reference/browse/get-recommendations/
+    // Note: Only one type of seed data is required at minimum (e.g. seed_artists or seed_genres) but a combination
+    // of all of them can be used together
+    // @params {integer} (optional) limit: target size of the list of recommended tracks. default: 20, min: 1, max: 100.
+    // @params {string} (optional) market: ISO 3166-1 alpha-2 country code. 
+    // @params {string} (required) seedArtists: comma separated list of spotify artists. up to 5 seed values.
+    // @params {string} (required) seedGenres: comma-separated list of any genres in teh set of available genre seeds.
+    // up to 5 seed values.
+    // @params {string} (required) seedTracks: comma-separed list of spotify IDs for a seed track. Up to 5 values.
+    // @returns recommendations object containing all of the recommendation data
+    getRecommendations = async (limit, market, seedArtists, seedGenres, seedTracks) => {
         let recommendations;
         let paramObject = {
             limit: limit,
             market: market,
+            seed_artists: seedArtists,
+            seed_genres: seedGenres,
+            seed_tracks: seedTracks,
         } 
         try {
             let url = 'https://api.spotify.com/v1/recommendations'
@@ -325,3 +349,42 @@ function isString (value) {
 
 export default SpotifyAPI;
 
+
+// Get New Releases function
+
+         // if (limit == undefined && country == undefined && offset == undefined) {
+            //     paramObject = {};
+            // } else if (limit != undefined && country == undefined && offset == undefined) {
+            //     paramObject = {
+            //         limit: limit
+            //     };
+            // } else if (limit == undefined && country != undefined && offset == undefined) {
+            //     paramObject = {
+            //         country: country
+            //     };
+            // } else if (limit == undefined && country == undefined && offset != undefined) {
+            //     paramObject = {
+            //         offset: offset
+            //     };
+            // } else if (limit != undefined && country != undefined && offset == undefined) {
+            //     paramObject = {
+            //         limit: limit,
+            //         country: country
+            //     };
+            // } else if (limit != undefined && country == undefined && offset != undefined) {
+            //     paramObject = {
+            //         limit: limit,
+            //         offset: offset
+            //     };
+            // } else if (limit == undefined && country != undefined && offset != undefined) {
+            //     paramObject = {
+            //         country: country,
+            //         offset: offset
+            //     }
+            // } else if (limit != undefined && country != undefined && offset != undefined) {
+            //     paramObject = {
+            //         country: country,
+            //         offset: offset,
+            //         limit: limit
+            //     }
+            // }
