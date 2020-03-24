@@ -9,6 +9,25 @@ import axios from 'axios';
 // Document each function's params, restrictions, and add link to spotify web api
 // Maybe add error logging if values are incorrect? 
 
+// Albums: Done
+// Artists: Done
+// Browse
+    // GetCategory: Done
+    // GetCategoryPlaylists: Done
+    // GetListOfCategories
+    // GetListOfFeaturedPlaylists: Done
+    // GetListOfNewReleases: Done
+    // GetRecommendations: Done but incomplete
+// Episode (new)
+// Follow
+// Library
+// Personalization
+// PLayer
+// Playlists
+// Search
+// Shows
+// Tracks
+// Users profile
 class SpotifyAPI {
     constructor(accessToken) {
         this.accessToken = accessToken
@@ -26,11 +45,122 @@ class SpotifyAPI {
     // The server cannot and will not process the request due to something perceived
     // as an error on the client side (e.g., malformed request syntax, etc.)
 
+
+    // Gets a Category
+    // @params: categoryID {string} (required): spotify category ID for the category. e.g. "party"
+    // @params: country {string} (optional): ISO 3166-1 alpha-2 country code. provide it to ensure categ exists for a country
+    // @params: locale {string} (optional): desired language consisting of ISO 639-1 language code and ISO 3166 country code
+    // @example:
+    // .getCategory("party") --> gets the single category "party" used to tag items in spotify
+    // .getCategory("party", undefined, "es_MX") --> gets category returned in "Spanish (Mexico)"
+    // @returns an object containing the category information
+    //
+
+    getCategory = async (categoryID, country, locale) => {
+        let category;
+
+        let paramObject = {
+            country: country,
+            locale: locale
+        };
+
+        try {
+            let url = 'https://api.spotify.com/v1/browse/categories/' + categoryID;
+            category = await axios.get(url, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.accessToken
+                },
+                params: paramObject
+            })
+        } catch (error) {
+            console.error('Error returned from Spotify-API in getCategory function', error);
+        }
+
+        console.log('Category is', category);
+        return category; 
+    }
+
+
+    //
+    // Gets list of Spotify playlists tagged with a particular category
+    // @params: categoryID {string} (required): spotify category ID for the category
+    // @params: country {string} (optional): ISO 3166-1 alpha-2 country code 
+    // @params: limit {integer} (optional): max number of items to return. default: 20, min: 1, max: 50
+    // @params: offset {integer} (optional): index of the first item to return. default: 0. 
+    // @example:
+    // .getCategoryPlaylists("party", undefined, 20) --> Gets first 20 spotify "party" playlists
+    // @returns an object containing playlists for that category
+    // 
+    getCategoryPlaylists = async (categoryID, country, limit, offset) => {
+        let categoryPlaylists;
+
+        let paramObject = {
+            country: country,
+            limit: limit,
+            offset: offset
+        }
+
+        try {
+            let url = 'https://api.spotify.com/v1/browse/categories/';
+            
+            categoryPlaylists = await axios.get(url, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.accessToken
+                },
+                params: paramObject
+            })
+        } catch (error) {
+            console.error('Error returned from Spotify-API in getCategoryPlaylists function', error);
+        }
+
+        console.log('Category Playlists are', categoryPlaylists);
+        return categoryPlaylists; 
+    }
+
+
+    // 
+    // Get a list of categories used to tag items in Spotify
+    // Link: https://developer.spotify.com/documentation/web-api/reference/browse/get-list-categories/
+    // @params: country {string} (optional): ISO 3166-1 alpha-2 country code
+    // @params: locale {string} (optional): ISO 639-1 language code with ISO 3166-1 alpha-2 country code. e.g. "es_MX"
+    // @params: limit {integer} (optional): max num of categories to return. default: 20, min: 1, max: 50.
+    // @params: offset {integer} (optional): index of first item. default: 0 (first object). 
+    // @example:
+    // .getListOfCategories(undefined, undefined, 20, 20) --> Get 20 categories offset by 20 (so categories number 20-40)
+    // .getListOfCategories("FR") ==> equivalent to: .getListOfCategories("FR", undefined, undefined, undefined) --> Gets default number of categories (20) for France
+    // @returns an Object containing a list of categories
+    // 
+    getListOfCategories = async (country, locale, limit, offset) => {
+        let listOfCategories;
+
+        let paramObject = {
+            country: country,
+            locale: locale,
+            limit: limit,
+            offset: offset,
+        }
+
+        try {
+            let url = 'https://api.spotify.com/v1/browse/categories/' + categoryID + '/play';
+            
+            listOfCategories = await axios.get(url, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.accessToken
+                },
+                params: paramObject
+            })
+        } catch (error) {
+            console.error('Error returned from Spotify-API in getListOfCategories function', error);
+        }
+
+        console.log('Categories  are', listOfCategories);
+        return listOfCategories; 
+    }
     //
     // Retrieves New Releases
-    // @params {integer} (optional) limit: number of releases to be retrieved. default: 20, min: 1, max: 50.
-    // @params {string} (optional) country: an ISO 3166-1 alpha-2 country code. 
-    // @params {integer} (optional) offset: the index of the first item to return. Default: 0
+    // @params: limit {integer} (optional): number of releases to be retrieved. default: 20, min: 1, max: 50.
+    // @params: country {string} (optional): an ISO 3166-1 alpha-2 country code. 
+    // @params: offset {integer} (optional): the index of the first item to return. Default: 0
     // @example: 
     // .getNewReleases(10) --> Returns 10 first newest releases for all countries <=> equivalent to .getNewReleases(10, undefined, undefinded)
     // .getNewReleases(undefined, 'FR', 10) --> Gets top 10-30 newest track for France (ISO code: "FR")
@@ -70,15 +200,15 @@ class SpotifyAPI {
 
     // 
     // Retrieve list of Spotify featuerd playlists
-    // @params {string} (optional) locale: desired language as lowercase ISO 639-1 language code & uppercase ISO 3166-1 alpha-2
+    // @params: locale {string} (optional): desired language as lowercase ISO 639-1 language code & uppercase ISO 3166-1 alpha-2
     // country code. e.g. es_MX --> "Spanish (Mexico)"
-    // @params {string} (optional) country: ISO 3166-1 alpha-2 country code. if you want a list
+    // @params: country {string} (optional): ISO 3166-1 alpha-2 country code. if you want a list
     // of returned items to be relevant to a particular country. e.g. "FR"
-    // @params {string} (optional) timestamp: ISO 8601 format --> yyyy-MM--ddTHH:mm:ss to get results
+    // @params: timestamp {string} (optional): ISO 8601 format --> yyyy-MM--ddTHH:mm:ss to get results
     // tailed for that specific time and day
-    // @params {integer} (optional) limit: max num of items to return. default: 20, min: 1, max: 50.
-    // @params {integer} (optional) offset: index of first item to return. default 0.
-    // @returns object featuredPlaylists containing all the necessary data :)
+    // @params: limit {integer} (optional): max num of items to return. default: 20, min: 1, max: 50.
+    // @params: offset {integer} (optional): index of first item to return. default 0.
+    // @returns: a featuredPlaylists object containing all the necessary data :)
     //
     getFeaturedPlaylists = async (locale, country, timestamp, limit, offset) => {
         let featuredPlaylists;
@@ -109,16 +239,17 @@ class SpotifyAPI {
 
     // Important: add max_*, min_*, etc?
 
-    // Get Recommendations from Seed Data: https://developer.spotify.com/documentation/web-api/reference/browse/get-recommendations/
+    // Get Recommendations from Seed Data
+    // Link: https://developer.spotify.com/documentation/web-api/reference/browse/get-recommendations/
+    // @params: limit {integer} (optional): target size of the list of recommended tracks. default: 20, min: 1, max: 100.
+    // @params: market {string} (optional): ISO 3166-1 alpha-2 country code. 
+    // @params: seedArtists {string} (required): comma separated list of spotify artists. up to 5 seed values.
+    // @params seedGenres {string} (required): comma-separated list of any genres in teh set of available genre seeds.
+    // up to 5 seed values.
+    // @params: seedTracks {string} (required): comma-separed list of spotify IDs for a seed track. Up to 5 values.
+    // @returns: recommendations object containing all of the recommendation data
     // Note: Only one type of seed data is required at minimum (e.g. seed_artists or seed_genres) but a combination
     // of all of them can be used together
-    // @params {integer} (optional) limit: target size of the list of recommended tracks. default: 20, min: 1, max: 100.
-    // @params {string} (optional) market: ISO 3166-1 alpha-2 country code. 
-    // @params {string} (required) seedArtists: comma separated list of spotify artists. up to 5 seed values.
-    // @params {string} (required) seedGenres: comma-separated list of any genres in teh set of available genre seeds.
-    // up to 5 seed values.
-    // @params {string} (required) seedTracks: comma-separed list of spotify IDs for a seed track. Up to 5 values.
-    // @returns recommendations object containing all of the recommendation data
     getRecommendations = async (limit, market, seedArtists, seedGenres, seedTracks) => {
         let recommendations;
         let paramObject = {
@@ -169,9 +300,15 @@ class SpotifyAPI {
         return featuredPlaylist; 
     }
 
-    // Album related methods 
+    // ALBUM RELATED METHODS
 
-    // Gets information from one album
+    // 
+    // Retrieves specific album's data
+    // Link: https://developer.spotify.com/documentation/web-api/reference/albums/get-album/
+    // @params: albumID  {string} (required): spotify's ID for the album
+    // @params: market {string} (optional): ISO 3166-1 alpha-2 country code
+    // @returns: album object containing all album data
+    //
     getAlbum = async (albumID, market) => {
         let album;
         let bodyParam = {
@@ -191,12 +328,15 @@ class SpotifyAPI {
         return album;
     }
 
+    //
     // Get tracks for an album
-    // Params: 
-    // albumID: spotify ID of album (string)
-    // limit: max number of tracs to return. default 20, minimum 1, max 50. (integer)
-    // offset: the index of the first track to return. default 0.
-    // market: an ISO 3166-1-alpha-2 country code (string)
+    // Link: https://developer.spotify.com/documentation/web-api/reference/albums/get-albums-tracks/
+    // @params: albumID {string} (required) 
+    // @params: limit {integer) (optional): max number of trackss to return. default = 20, min = 1, max = 50. 
+    // @params: offset {integer} (optional): the index of the first track to return. default 0.
+    // @params: market {string} (optional): an ISO 3166-1-alpha-2 country code (string)
+    // @returns: an albumTracks object containing all of the album's track data
+    // 
     getAlbumTracks = async (albumID, limit, offset, market) => {
         let albumTracks;
         let bodyParam = {
@@ -218,8 +358,13 @@ class SpotifyAPI {
         return albumTracks;
     }
 
-
-    // Get several albums at the same time
+    //
+    // Retrieves information about several albums
+    // Link:https://developer.spotify.com/documentation/web-api/reference/albums/get-several-albums/
+    // @params: albumIdStrings {string} (required): comma-separated list of the spotify IDs for the album. max = 20.
+    // @params: market {string} (optional): An ISO 3166-1 alpha-2 country code
+    // @returns: albumIDs object containing all of the albums' data 
+    // 
     getAlbums = async (albumIdStrings, market) => {
         let albumIDs;
         let bodyParam = {
