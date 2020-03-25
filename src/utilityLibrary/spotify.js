@@ -14,14 +14,17 @@ import axios from 'axios';
 // Browse
     // GetCategory: Done
     // GetCategoryPlaylists: Done
-    // GetListOfCategories
+    // GetListOfCategories: Done
     // GetListOfFeaturedPlaylists: Done
     // GetListOfNewReleases: Done
     // GetRecommendations: Done but incomplete
-// Episode (new)
+// EPISODE: Endpoints for retrieving information about one or more episodes from the Spotify catalog
+    // GetEpisode: Done
+    // GetSeveralEpisodes: Done
 // Follow
 // Library
 // Personalization
+    // getUserTopTracks: 
 // PLayer
 // Playlists
 // Search
@@ -484,7 +487,125 @@ class SpotifyAPI {
         return artistsData;
     }
 
-    
+    // 
+    // getEpisode()
+    //
+    // Gets Spotify catalog info for a single episode identified by its unique Spotify ID
+    // Link: https://developer.spotify.com/documentation/web-api/reference/episodes/get-an-episode/
+    //
+    // @params: episodeID {string} (required): based 64 identifier representing the spotify ID for the episode
+    // @params: market {string} (required): an ISO 3166-1 alpha-2 country code. 
+    // If a country is specified, only shows and episodes available in that country are returned
+    // If a valid user access token is specified in the request header, the country associated w/ theuser account will 
+    // take priority over this parameter
+    //
+    // @returns an object containing information about the specified episode (duration, description, images, etc.)
+    // 
+    getEpisode = async(episodeID, market) => {
+        let episodeData;
+
+        let queryParam = {
+            market: market
+        }
+
+        try {
+            let url = 'https://api.spotify.com/v1/episodes/' + episodeID;
+            episodeData = await axios.get(url, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.accessToken
+                },
+                params: queryParam
+            })
+        } catch(error) {
+            console.error('Error caught in getEpisode function', error);
+        }
+        
+        console.log('Episode data',episodeData);
+        return episodeData
+    }
+
+
+    // 
+    // getSeveralEpisodes()
+    //
+    // Gets Spotify catalog information for multiple episodes based on their Spotify ID
+    // Link: https://developer.spotify.com/documentation/web-api/reference/episodes/get-several-episodes/
+    //
+    // @params: ids {string} (required): comma-separated list of Spotify IDs for teh episodes. max: 50 IDs.
+    // @params: market {string} (optional): ISO 3166-1 alpha-2 country code: If country code is specified, only shows and epsiodes available
+    // in that market will be returned. same other rules apply as in .getEpisode method.
+    // More info can be found in the above link
+    // 
+    // @returns an object contain the several episode's respective information
+    //
+    getSeveralEpisodes = async(listOfEpisodeIDs, market) => {
+        let severalEpisodeData;
+
+        let queryParam = {
+            ids: listOfEpisodeIDs,
+            market: market
+        }
+
+        try {
+            let url = 'https://api.spotify.com/v1/episodes/';
+            severalEpisodeData = await axios.get(url, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.accessToken
+                },
+                params: queryParam
+            })
+        } catch(error) {
+            console.error('Error caught in getSeveralEpisodes function', error);
+        }
+        
+        console.log('Several episodes data', severalEpisodeData);
+        return severalEpisodeData
+    }
+
+    //
+    // getUserTop()
+    // 
+    // Gets the current user's top artists or tracks based on calculated affinity
+    // Link: https://developer.spotify.com/documentation/web-api/reference/personalization/get-users-top-artists-and-tracks/
+    //
+    // @params: type {string} (required): Only two options "artists" or "tracks"
+    // @params: limit {integer} (optional): Num of entities to return. Default: 20, min: 1, max: 50.
+    // @params: offset {integer} (optional): Index of first entity to return. Default: 0 (the first track)
+    // @params: timeRange {string} (optional): over what time frame affinities are computed.
+    // Valid values include "long_term" (several years of data), "medium_term" (-6 months of data), "short_term" (-4 weeks)
+    // 
+    // @example:
+    // .getUserTop("artists", 30) --> Get's user's top 30 artists
+    // .getUserTop("tracks", 40, undefined, "short_term") --> Get's user's top 40 tracks over past 4 weeks
+    // .getUserTop("tracks", undefined, undefined, "long_term") --> Gets user's top tracks over past several years
+    // .getUserTop("artists") --> Get's user's top artists over medium_term (which is default value)
+    //
+    // @returns an object containing top user track's or artists
+    // 
+    getUserTopTracks = async (type, limit, offset, timeRange) => {
+        let userTopTracks;
+
+        let queryParam = {
+            limit: limit,
+            offset: offset,
+            timeRange: timeRange
+        }
+        
+        try {
+            let url = 'https://api.spotify.com/v1/me/top/' + type;
+            userTopTracks = await axios.get(url, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.accessToken
+                },
+                params: queryParam
+            })
+        } catch(error) {
+            console.error('Error caught in getUserTopTracks function', error)
+        }
+
+        console.log('User top tracks returned are', userTopTracks);
+        return userTopTracks;
+    }
 }
 
 function isString (value) {
