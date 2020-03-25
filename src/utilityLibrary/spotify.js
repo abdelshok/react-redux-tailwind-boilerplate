@@ -11,7 +11,7 @@ import axios from 'axios';
 
 // Albums: Done
 // Artists: Done
-// Browse
+// Browse: DONE
     // GetCategory: Done
     // GetCategoryPlaylists: Done
     // GetListOfCategories: Done
@@ -22,9 +22,28 @@ import axios from 'axios';
     // GetEpisode: Done
     // GetSeveralEpisodes: Done
 // Follow
+    // checkIfFollowsArtistUser:
+    // checkIfFollowsPlaylist:
+    // followArtistsOrUsers:
+    // followPlaylist:
+    // getUserFollowedArtist:
+    // unfollowArtistOrUser:
+    // unfollowPlaylist:
 // Library
-// Personalization
-    // getUserTopTracks: 
+    // checkIfUserSavedAlbum
+    // checkIfUserSavedShow
+    // checkIfUserSavedTrack
+    // getUserSavedAlbums
+    // getUserSavedShows
+    // getUserSavedTracks
+    // removeAlbumsFromUser
+    // removeShowFromUser (plural)
+    // removeTracks
+    // saveAlbums
+    // saveShows
+    // saveTracks
+// PERSONALIZATION: DONE
+    // getUserTopTracks: Done
 // PLayer
 // Playlists
 // Search
@@ -606,6 +625,260 @@ class SpotifyAPI {
         console.log('User top tracks returned are', userTopTracks);
         return userTopTracks;
     }
+
+
+    // LIBRARY API ENDPOINTS
+
+
+    //
+    // checkIfAlbumSaved()
+    // 
+    // Check if one or more albums is already saved in current Spotify user's 'Your Music' library
+    // Link: https://developer.spotify.com/documentation/web-api/reference/library/check-users-saved-albums/
+    //
+    // @params: albumIDs {string} (required): comma-separated list of the Spoitfy IDs for the albums
+    // @example
+    // .checkIfAlbumSaved('0pJJgBzj26qnE1nSQUxaB0,5ZAKzV4ZIa5Gt7z29OYHv0, 8744Bzj26Adjeieo5ZAKzV4ZIa5Gt7z29OYHv0')
+    //
+    // @returns an array of true or false values in same order in which tie ids were specified
+    // e.g. [true, false]
+    //
+
+    checkIfAlbumSaved = async(albumIDs) => {
+        let isAlbumSaved;
+        
+        let queryParam = {
+            ids: albumIDs
+        }
+        
+        try {
+            let url = 'https://api.spotify.com/v1/me/albums/contains';
+            isAlbumSaved = await axios.get(url, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.accessToken
+                },
+                params: queryParam
+            })
+        } catch (error) {
+            console.error('Error caught in checkIfAlbumSaved function', error);
+        }
+
+        console.log('Is album saved for user?', isAlbumSaved);
+        return isAlbumSaved
+    }
+
+
+    //
+    // checkIfShowSaved()
+    // 
+    // Check if one or more shows is already saved in current Spotify user's library
+    // Link: https://developer.spotify.com/documentation/web-api/reference/library/check-users-saved-shows/
+    //
+    // @params: showIDs {string} (required): comma-separated list of the Spoitfy IDs for the shows
+    // @example
+    // .checkIfShowSaved('5AvwZVawapvyhJUIx71pdJ,2C6ups0LMt1G8n81XLlkbsPo,2C5AvwZVawapvyhJUIx71pdJ')
+    //
+    // @returns an array of true or false values in same order in which the ids were specified
+    // e.g. [true, false]
+    //
+
+    checkIfShowSaved = async(showIDs) => {
+        let isShowSavedArray;
+        
+        let queryParam = {
+            ids: showIDs
+        }
+        
+        try {
+            let url = 'https://api.spotify.com/v1/me/shows/contains';
+            isShowSaved = await axios.get(url, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.accessToken
+                },
+                params: queryParam
+            })
+
+
+        } catch (error) {
+            console.error('Error caught in checkIfShowSaved function', error);
+        }
+        console.log('Is show saved for user?', isShowSaved);
+        return isShowSavedArray;
+    }
+
+    //
+    // checkIfTrackSaved()
+    // 
+    // Check if one or more tracks is already saved in the current Spotify user’s ‘Your Music’ library.
+    // Link: https://developer.spotify.com/documentation/web-api/reference/library/check-users-saved-tracks/
+    //
+    // @params: showIDs {string} (required): comma-separated list of the Spotify IDs for the tracks. Max: 50 IDs.
+    // @example
+    // .checkIfTrackSaved('0udZHhCi7p1YzMlvI4fXoK,3SF5puV5eb6bgRSxBeMOk9')
+    //
+    // @returns an array of true or false values in same order in which the ids were specified
+    // e.g. [true]
+    //
+
+    checkIfTrackSaved = async (trackIDs) => {
+        let isTrackSavedArray;
+        
+        let queryParam = {
+            ids: trackIDs
+        }
+        
+        try {
+            let url = 'https://api.spotify.com/v1/me/tracks/contains';
+            isTrackSavedArray = await axios.get(url, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.accessToken
+                },
+                params: queryParam
+            })
+
+
+        } catch (error) {
+            console.error('Error caught in checkIfTrackSaved function', error);
+        }
+        console.log('Tracks saved for user?', isTrackSavedArray);
+        return isTrackSavedArray;
+    }
+
+
+    // 
+    // getUserSavedAlbums()
+    //
+    // Gets a list of the albums saved in the current spotify user's 'Your Music' library
+    // Link: https://developer.spotify.com/documentation/web-api/reference/library/get-users-saved-albums/
+    //
+    // @params: limit {integer} (optional): max number of objects to return. default: 20, min: 1, max: 50
+    // @params: offset {integer} (optional): index of the first object to return. default:  0 (the first object)
+    // @params: market {string} (optional): ISO 3611-1 alpha-2 country code or the string from_token.
+    //
+    // @example
+    // .getUserSavedAlbums(20) --> Get 20 of the user's saved albums. (Unsure if they're ordered alphabetically, by date added, etc.)
+    // .getUserSavedAlbums(50, undefined, 'FR') --> Get 50 of the user's saved albums from 'France' / 'FR' 
+    // .getUserSavedAlbums(undefined, undefined, 'GB') --> Gets default amount of albums (undefined = no value passed = default value --> 20 albums) saved by user from 'GB' = Great Britain
+    //
+    // @returns object containing an array of album objects in JSON format. Each album object is accompanied by timestamp to 
+    // show when it was added. More information at the link above.
+    //
+
+    getUserSavedAlbums = async (limit, offset, market) => {
+        let savedAlbums;
+
+        let queryParam = {
+            limit: limit, 
+            offset: offset,
+            market: market
+        }
+
+        try {
+            let url = 'https://api.spotify.com/v1/me/albums'
+            savedAlbums = await axios.get(url, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.accessToken
+                },
+                params: queryParam
+            })
+        } catch (error) {
+            console.error('Error caught in the getUserSavedAlbums', error);
+        }
+
+        console.log('Albums saved by user ', savedAlbums);
+        return savedAlbums;
+    }
+
+
+    // 
+    // getUserSavedShows()
+    //
+    // Gets a list of the shows saved in the current spotify user's library
+    // Link: https://developer.spotify.com/documentation/web-api/reference/library/get-users-saved-shows/
+    //
+    // @params: limit {integer} (optional): max number of objects to return. default: 20, min: 1, max: 50
+    // @params: offset {integer} (optional): index of the first object to return. default:  0 (the first object)
+    //
+    // @example
+    // .getUserSavedShows(20) --> Get 20 of the user's saved shows. (Unsure if they're ordered alphabetically, by date added, etc.)
+    // .getUserSavedShows(50, undefined, 'FR') --> Get 50 of the user's saved shows from 'France' / 'FR' 
+    // .getUserSavedShows(undefined, undefined, 'GB') --> Gets default amount of shows (undefined = no value passed = default value --> 20 shows) saved by user from 'GB' = Great Britain
+    //
+    // @returns object containing an array of saved show objects in JSON format. If user does not have any shows saved, response will
+    // be an empty array. If show is unavailable ingiven market, it's filtered out. 
+    //
+
+    // IMPORTANT: Contact spotify for this one, there's a query parameter market missing?
+    // 
+    getUserSavedShows = async (limit, offset) => {
+        let savedShows;
+
+        let queryParam = {
+            limit: limit, 
+            offset: offset
+        }
+
+        try {
+            let url = 'https://api.spotify.com/v1/me/shows'
+            savedShows = await axios.get(url, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.accessToken
+                },
+                params: queryParam
+            })
+        } catch (error) {
+            console.error('Error caught in the getUserSavedShows', error);
+        }
+
+        console.log('Shows saved by user ', savedShows);
+        return savedShows;
+    }
+    
+    
+
+    // 
+    // getUserSavedTracks()
+    //
+    // Gets a list of the tracks saved in the current spotify user's 'Your Music' library
+    // Link: https://developer.spotify.com/documentation/web-api/reference/library/get-users-saved-tracks/
+    //
+    // @params: limit {integer} (optional): max number of objects to return. default: 20, min: 1, max: 50
+    // @params: offset {integer} (optional): index of the first object to return. default:  0 (the first object)
+    // @params: market {string} (optional): ISO 3611-1 alpha-2 country code or the string from_token.
+    //
+    // @example
+    // .getUserSavedTracks(20) --> Get 20 of the user's saved tracks. (Unsure if they're ordered alphabetically, by date added, etc.)
+    // .getUserSavedTracks(50, undefined, 'FR') --> Get 50 of the user's saved tracks from 'France' / 'FR' 
+    // .getUserSavedTracks(undefined, undefined, 'GB') --> Gets default amount of tracks (undefined = no value passed = default value --> 20 tracks) saved by user from 'GB' = Great Britain
+    //
+    // @returns object containing an array of saved track objects in JSON format.
+    //
+
+    getUserSavedTracks = async (limit, offset, market) => {
+        let savedTracks;
+
+        let queryParam = {
+            limit: limit, 
+            offset: offset,
+            market: market
+        }
+
+        try {
+            let url = 'https://api.spotify.com/v1/me/tracks'
+            savedTracks = await axios.get(url, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.accessToken
+                },
+                params: queryParam
+            })
+        } catch (error) {
+            console.error('Error caught in the getUserSavedTracks', error);
+        }
+
+        console.log('Tracks saved by user ', savedTracks);
+        return savedTracks;
+    }
+
 }
 
 function isString (value) {
