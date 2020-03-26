@@ -9,6 +9,14 @@ import axios from 'axios';
 // Document each function's params, restrictions, and add link to spotify web api
 // Maybe add error logging if values are incorrect? 
 
+
+// General notes:
+// 403 errors will be returned if you do not have user's authorization so change the list of permissions
+// if you get that error
+// 
+//
+//
+
 // Albums: Done
 // Artists: Done
 // Browse: DONE
@@ -21,15 +29,15 @@ import axios from 'axios';
 // EPISODE: Endpoints for retrieving information about one or more episodes from the Spotify catalog
     // GetEpisode: Done
     // GetSeveralEpisodes: Done
-// Follow
-    // checkIfUserFollows:
-    // checkIfFollowsPlaylist:
-    // followArtistsOrUsers:
-    // followPlaylist:
-    // getUserFollowedArtist:
-    // unfollowArtistOrUser:
-    // unfollowPlaylist:
-// Library
+// Follow: UNSURE BUT DONE
+    // checkIfUserFollows: Done
+    // checkIfFollowsPlaylist: Done
+    // followArtistsOrUsers: Done
+    // followPlaylist: Done
+    // getUserFollowedArtist: Done
+    // unfollowArtistOrUser: Done
+    // unfollowPlaylist: Done
+// Library: next
     // checkIfAlbumSaved: Done
     // checkIfShowSaved: Done
     // checkIfTrackSaved: Done
@@ -46,10 +54,10 @@ import axios from 'axios';
     // getUserTopTracks: Done
 // PLayer
 // Playlists
-// Search
-// Shows
-// Tracks
-// Users profile
+// Search : next
+// Shows : next
+// Tracks: next
+// Users profile: next
 
 // https://dev.to/thomasstep/splitting-javascript-classes-into-different-files-359g
 // https://github.com/neogeek/doxdox#layouts
@@ -632,29 +640,28 @@ class SpotifyAPI {
 
 
     //
-    // : Done()
     // 
     // Check if one or more albums is already saved in current Spotify user's 'Your Music' library
     // Link: https://developer.spotify.com/documentation/web-api/reference/library/check-users-saved-albums/
     //
-    // @params: albumIDs {string} (required): comma-separated list of the Spoitfy IDs for the albums
+    // @param {Array<string>} albumIDs Array of one or more album's Spotify IDs
     // @example
-    // .checkIfAlbumSaved('0pJJgBzj26qnE1nSQUxaB0,5ZAKzV4ZIa5Gt7z29OYHv0, 8744Bzj26Adjeieo5ZAKzV4ZIa5Gt7z29OYHv0')
+    // .checkIfAlbumSaved(['0pJJgBzj26qnE1nSQUxaB0,5ZAKzV4ZIa5Gt7z29OYHv0, 8744Bzj26Adjeieo5ZAKzV4ZIa5Gt7z29OYHv0]) 
+    // --> Checks if these two albums are in saved for current user
     //
-    // @returns an array of true or false values in same order in which tie ids were specified
+    // @return {Object} An object containing a JSON array of true or false values in the same order in which the ids were specified
     // e.g. [true, false]
     //
-
     checkIfAlbumSaved = async(albumIDs) => {
-        let isAlbumSaved;
+        let areAlbumSavedArray;
         
         let queryParam = {
-            ids: albumIDs
+            ids: albumIDs.join(','),
         }
         
         try {
             let url = 'https://api.spotify.com/v1/me/albums/contains';
-            isAlbumSaved = await axios.get(url, {
+            areAlbumSavedArray = await axios.get(url, {
                 headers: {
                     'Authorization': 'Bearer ' + this.accessToken
                 },
@@ -664,22 +671,20 @@ class SpotifyAPI {
             console.error('Error caught in checkIfAlbumSaved function', error);
         }
 
-        console.log('Is album saved for user?', isAlbumSaved);
-        return isAlbumSaved
+        return areAlbumSavedArray
     }
 
 
+    // Important: pretty sure examples don't count here, but keep them for NPM page
     //
-    // checkIfShowSaved()
-    // 
     // Check if one or more shows is already saved in current Spotify user's library
-    // Link: https://developer.spotify.com/documentation/web-api/reference/library/check-users-saved-shows/
+    // More information at [Check User's Saved Albums] (https://developer.spotify.com/documentation/web-api/reference/library/check-users-saved-shows/)
     //
-    // @params: showIDs {string} (required): comma-separated list of the Spoitfy IDs for the shows
+    // @param {Array<string>} showIDs Array of one or more Shows' Spotify ID
     // @example
-    // .checkIfShowSaved('5AvwZVawapvyhJUIx71pdJ,2C6ups0LMt1G8n81XLlkbsPo,2C5AvwZVawapvyhJUIx71pdJ')
+    // .checkIfShowSaved(['5AvwZVawapvyhJUIx71pdJ', '2C6ups0LMt1G8n81XLlkbsPo,2C5AvwZVawapvyhJUIx71pdJ'])
     //
-    // @returns an array of true or false values in same order in which the ids were specified
+    // @returns {Object} An object containing a JSON array of true or false values in same order in which the ids were specified
     // e.g. [true, false]
     //
 
@@ -687,7 +692,7 @@ class SpotifyAPI {
         let isShowSavedArray;
         
         let queryParam = {
-            ids: showIDs
+            ids: showIDs.join(',')
         }
         
         try {
@@ -703,21 +708,19 @@ class SpotifyAPI {
         } catch (error) {
             console.error('Error caught in checkIfShowSaved function', error);
         }
-        console.log('Is show saved for user?', isShowSavedArray);
         return isShowSavedArray;
     }
 
     //
-    // checkIfTrackSaved()
     // 
     // Check if one or more tracks is already saved in the current Spotify user’s ‘Your Music’ library.
-    // Link: https://developer.spotify.com/documentation/web-api/reference/library/check-users-saved-tracks/
+    // More information at [Check User's Saved Tracks](https://developer.spotify.com/documentation/web-api/reference/library/check-users-saved-tracks/)
     //
-    // @params: showIDs {string} (required): comma-separated list of the Spotify IDs for the tracks. Max: 50 IDs.
+    // @param {Array<string>} Array of one or more track's Spotify IDs. Max: 50 IDs.
     // @example
-    // .checkIfTrackSaved('0udZHhCi7p1YzMlvI4fXoK,3SF5puV5eb6bgRSxBeMOk9')
+    // .checkIfTrackSaved(['0udZHhCi7p1YzMlvI4fXoK' , '3SF5puV5eb6bgRSxBeMOk9'])
     //
-    // @returns an array of true or false values in same order in which the ids were specified
+    // @return {Object} Object containing a JSON array of true or false values in same order in which the IDs were specified.
     // e.g. [true]
     //
 
@@ -725,7 +728,7 @@ class SpotifyAPI {
         let isTrackSavedArray;
         
         let queryParam = {
-            ids: trackIDs
+            ids: trackIDs.join(','),
         }
         
         try {
@@ -741,38 +744,28 @@ class SpotifyAPI {
         } catch (error) {
             console.error('Error caught in checkIfTrackSaved function', error);
         }
-        console.log('Tracks saved for user?', isTrackSavedArray);
         return isTrackSavedArray;
     }
 
 
     // 
-    // : Done()
-    //: Done
-    // Gets : Donea list of the albums saved in the current spotify user's 'Your Music' library
-    // Link: https://developer.spotify.com/documentation/web-api/reference/library/get-users-saved-albums/
+    // Gets a list of the albums saved in the current Spotify user's 'Your Music' library
+    // More details can be found at [Get Current User's Saved Albums](https://developer.spotify.com/documentation/web-api/reference/library/get-users-saved-albums/)
     //
-    // @params: limit {integer} (optional): max number of objects to return. default: 20, min: 1, max: 50
-    // @params: offset {integer} (optional): index of the first object to return. default:  0 (the first object)
-    // @params: market {string} (optional): ISO 3611-1 alpha-2 country code or the string from_token.
+    // @param {Object} [options] Optional object that can contain up to three properties including: "limit", which is an 
+    // integer setting the max num of objects to return, "offset", which represents the index of the first object
+    // to return, and "market", which is an optional ISO 3166-1 alpha-2 country code
     //
     // @example
-    // .getUserSavedAlbums(20) --> Get 20 of the user's saved albums. (Unsure if they're ordered alphabetically, by date added, etc.)
-    // .getUserSavedAlbums(50, undefined, 'FR') --> Get 50 of the user's saved albums from 'France' / 'FR' 
-    // .getUserSavedAlbums(undefined, undefined, 'GB') --> Gets default amount of albums (undefined = no value passed = default value --> 20 albums) saved by user from 'GB' = Great Britain
-    //
-    // @returns object containing an array of album objects in JSON format. Each album object is accompanied by timestamp to 
-    // show when it was added. More information at the link above.
+    //.getUserSavedAlbums({market: 'FR', limit: 50}) --> Returns 50 albums from France saved for the current user
+    // 
+    // @return {Object} An object containing an array of album objects in JSON format. Each album object is accompanied by timestamp to 
+    // show when it was added. More information in the above link.
     //
 
-    getUserSavedAlbums = async (limit, offset, market) => {
+    getUserSavedAlbums = async (queryParam) => {
         let savedAlbums;
 
-        let queryParam = {
-            limit: limit, 
-            offset: offset,
-            market: market
-        }
 
         try {
             let url = 'https://api.spotify.com/v1/me/albums'
@@ -792,32 +785,22 @@ class SpotifyAPI {
 
 
     // 
-    // getUserSavedShows()
-    //
     // Gets a list of the shows saved in the current spotify user's library
-    // Link: https://developer.spotify.com/documentation/web-api/reference/library/get-users-saved-shows/
+    // More details can be found at [Get User's Saved Shows](https://developer.spotify.com/documentation/web-api/reference/library/get-users-saved-shows/)
     //
-    // @params: limit {integer} (optional): max number of objects to return. default: 20, min: 1, max: 50
-    // @params: offset {integer} (optional): index of the first object to return. default:  0 (the first object)
+    // @param {Object} [options] Optional object that can contain up to three properties including: "limit", which is an 
+    // integer setting the max num of objects to return, "offset", which represents the index of the first object
+    // to return, and "market", which is an optional ISO 3166-1 alpha-2 country code
     //
     // @example
-    // .getUserSavedShows(20) --> Get 20 of the user's saved shows. (Unsure if they're ordered alphabetically, by date added, etc.)
-    // .getUserSavedShows(50, undefined, 'FR') --> Get 50 of the user's saved shows from 'France' / 'FR' 
-    // .getUserSavedShows(undefined, undefined, 'GB') --> Gets default amount of shows (undefined = no value passed = default value --> 20 shows) saved by user from 'GB' = Great Britain
-    //
-    // @returns object containing an array of saved show objects in JSON format. If user does not have any shows saved, response will
-    // be an empty array. If show is unavailable ingiven market, it's filtered out. 
-    //
-
-    // IMPORTANT: Contact spotify for this one, there's a query parameter market missing?
+    //.getUserSavedShows({market: 'GB', limit: 10}) --> Returns 10 shows from Great Britain saved for the current user
     // 
-    getUserSavedShows = async (limit, offset) => {
-        let savedShows;
+    // @return {Object} An object containing an array of saved show objects in JSON format. If user does not have any shows saved, response will
+    // be an empty array. If show is unavailable in a given market, it's filtered out. 
+    //
 
-        let queryParam = {
-            limit: limit, 
-            offset: offset
-        }
+    getUserSavedShows = async (queryParam) => {
+        let savedShows;
 
         try {
             let url = 'https://api.spotify.com/v1/me/shows'
@@ -838,21 +821,17 @@ class SpotifyAPI {
     
 
     // 
-    // getUserSavedTracks()
-    //
     // Gets a list of the tracks saved in the current spotify user's 'Your Music' library
-    // Link: https://developer.spotify.com/documentation/web-api/reference/library/get-users-saved-tracks/
+    // More details can be found at [Get User's Saved Tracks](https://developer.spotify.com/documentation/web-api/reference/library/get-users-saved-tracks/)
     //
-    // @params: limit {integer} (optional): max number of objects to return. default: 20, min: 1, max: 50
-    // @params: offset {integer} (optional): index of the first object to return. default:  0 (the first object)
-    // @params: market {string} (optional): ISO 3611-1 alpha-2 country code or the string from_token.
+    // @param {Object} [options] Optional object that can contain up to three properties including: "limit", which is an 
+    // integer setting the max num of objects to return, "offset", which represents the index of the first object
+    // to return, and "market", which is an optional ISO 3166-1 alpha-2 country code
     //
     // @example
-    // .getUserSavedTracks(20) --> Get 20 of the user's saved tracks. (Unsure if they're ordered alphabetically, by date added, etc.)
-    // .getUserSavedTracks(50, undefined, 'FR') --> Get 50 of the user's saved tracks from 'France' / 'FR' 
-    // .getUserSavedTracks(undefined, undefined, 'GB') --> Gets default amount of tracks (undefined = no value passed = default value --> 20 tracks) saved by user from 'GB' = Great Britain
+    //.getUserSavedShows({market: 'SP'}) --> Returns 20 Tracks (default number) from Spain saved for the current user
     //
-    // @returns object containing an array of saved track objects in JSON format.
+    // @return {Object} An object containing an array of saved track objects in JSON format. More details can be found in the link above.
     //
 
     getUserSavedTracks = async (limit, offset, market) => {
@@ -880,7 +859,199 @@ class SpotifyAPI {
         return savedTracks;
     }
 
-    // Follow Endpoints
+    // Test this function here again
+
+    // 
+    // Removes one or more albums from current user's 'Your Music' library
+    // 
+    // @param {Array<string>} albumIDs Array of one or more album IDs to be deleted from user's library
+    //
+    // @return {Object} An object containing a response header 200 if successful. Error code returned if error encoutered.
+    //
+
+    // Important, tell spotify that the Remove User's Saved Shows vs. Removed User's Album doc is inconsistent.
+    removeAlbums = async (albumIDs) => {
+        let responseBody;
+
+        let queryParam = {
+            ids: albumIDs.join(','),
+        }
+
+        try {
+            let url = 'https://api.spotify.com/v1/me/albums'
+            responseBody = await axios.delete(url, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.accessToken,
+                },
+                params: queryParam
+            })
+
+        } catch (error) {
+            console.error('Error caught in removeAlbums function', error);
+        }
+
+        return responseBody;
+
+    }
+
+
+    // 
+    // Removes one or more shows from current user's library
+    // More details can be found at [Remove User's Saved Shows](https://developer.spotify.com/documentation/web-api/reference/library/remove-shows-user/) 
+    //
+    // @param {Array<string>} showIDs Array of one or more show IDs to be deleted from user's library
+    //
+    // @return {Object} An object containing a response header 200 if successful. Error code returned if error encoutered.
+    //
+
+    removeShows = async (showIDs) => {
+        let responseBody;
+
+        let queryParam = {
+            ids: showIDs.join(','),
+        }
+
+        try {
+            let url = 'https://api.spotify.com/v1/me/shows'
+            responseBody = await axios.delete(url, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.accessToken,
+                },
+                params: queryParam
+            })
+
+        } catch (error) {
+            console.error('Error caught in removeShows function', error);
+        }
+        return responseBody;
+    }
+
+
+    // 
+    // Removes one or more tracks from current user's library
+    // More details can be found at [Remove User's Saved Tracks](https://developer.spotify.com/documentation/web-api/reference/library/remove-tracks-user/)
+    //
+    // @param {Array<string>} trackIDs Array of one or more track IDs to be deleted from user's library
+    //
+    // @return {Object} An object containing a response header 200 if successful. Error code returned if error encoutered.
+    //
+    removeTracks = async (trackIDs) => {
+        let responseBody;
+
+        let queryParam = {
+            ids: trackIDs.join(','),
+        }
+
+        try {
+            let url = 'https://api.spotify.com/v1/me/tracks'
+            responseBody = await axios.delete(url, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.accessToken,
+                },
+                params: queryParam
+            })
+
+        } catch (error) {
+            console.error('Error caught in removeTracks function', error);
+        }
+        return responseBody;
+    }
+
+    // 
+    // Save one or more albums to the current user's 'Your Music' library
+    // More details can be found at [Save Album For Current User](https://developer.spotify.com/documentation/web-api/reference/library/save-albums-user/)
+    //
+    // @param {Array<string>} albumIDs Array of one or more album Spotify IDs to be added to user's library
+    //
+    // @return {Object} An object containing a response header 201 (created) if successful. Error code returned if error encoutered.
+    // 403 Forbidden is returned if user did not provide authorization.
+    //
+    saveAlbums = async (albumIDs) => {
+        let responseBody;
+
+        let queryParam = {
+            ids: albumIDs.join(','),
+        };
+
+        try {
+            let url = 'https://api.spotify.com/v1/me/albums'
+            responseBody = await axios.put(url, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.accessToken,
+                },
+                params: queryParam
+            })
+
+        } catch (error) {
+            console.error('Error caught in saveAlbums function', error);
+        }
+        return responseBody;
+    }
+
+    // 
+    // Save one or more shows to the current user's library
+    // More details can be found at [Save Shows For Current User](https://developer.spotify.com/documentation/web-api/reference/library/save-shows-user/)
+    //
+    // @param {Array<string>} showIDs Array of one or more show Spotify IDs to be added to user's library
+    //
+    // @return {Object} An object containing a response header 200 if successful. Error code returned if error encoutered.
+    // 403 Forbidden is returned if user did not provide authorization or if more than 10,000 items saved in library.
+    //
+    saveShows = async (showIDs) => {
+        let responseBody;
+
+        let queryParam = {
+            ids: showIDs.join(','),
+        };
+
+        try {
+            let url = 'https://api.spotify.com/v1/me/shows'
+            responseBody = await axios.put(url, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.accessToken,
+                },
+                params: queryParam
+            })
+
+        } catch (error) {
+            console.error('Error caught in saveShows function', error);
+        }
+        return responseBody;
+    }
+
+    // 
+    // Save one or more tracks to the current user's library
+    // More details can be found at [Save Tracks For Current User](https://developer.spotify.com/documentation/web-api/reference/library/save-tracks-user/)
+    //
+    // @param {Array<string>} trackIDs Array of one or more track Spotify IDs to be added to user's library
+    //
+    // @return {Object} An object containing a response header 200 if successful. Error code returned if error encoutered.
+    // 403 Forbidden is returned if user did not provide authorization or if more than 10,000 items saved in library.
+    //
+    saveTracks = async (trackIDs) => {
+        let responseBody;
+
+        let queryParam = {
+            ids: trackIDs.join(','),
+        };
+
+        try {
+            let url = 'https://api.spotify.com/v1/me/tracks'
+            responseBody = await axios.put(url, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.accessToken,
+                },
+                params: queryParam
+            })
+
+        } catch (error) {
+            console.error('Error caught in saveTracks function', error);
+        }
+        return responseBody;
+    }
+
+    // FOLLOW ENDPOINTS
+
 
     // 
     // Checks to see if the current user is following one or more artists. 
@@ -1115,6 +1286,7 @@ class SpotifyAPI {
         let responseBody;
 
         let queryParam = {
+            type: 'artist',
             ids: artistIDs.join(',')
         }
 
@@ -1129,6 +1301,40 @@ class SpotifyAPI {
 
         } catch (error) {
             console.error('Error caught in unfollowArtist function', error);
+        }
+
+        return responseBody;
+    }
+
+        
+    // 
+    // Removes one or more users from the current user's list of followed users
+    // More information at [Unfollow Artists or Users](https://developer.spotify.com/documentation/web-api/reference/follow/unfollow-artists-users/)
+    // 
+    // @param {Array<string>}: Array of one or more users' Spotify IDs
+    //
+    // @return {Object} An object with a status code 204 in the response header and an empty response
+    // body if response body is empty. 
+    //
+    unfollowUser = async(userIDs) => {
+        let responseBody;
+
+        let queryParam = {
+            type: 'user',
+            ids: userIDs.join(',')
+        }
+
+        try {
+            let url = 'https://api.spotify.com/v1/me/following'
+            responseBody = await axios.delete(url, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.accessToken,
+                },
+                params: queryParam
+            })
+
+        } catch (error) {
+            console.error('Error caught in unfollowUser function', error);
         }
 
         return responseBody;
