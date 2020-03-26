@@ -22,7 +22,7 @@ import axios from 'axios';
     // GetEpisode: Done
     // GetSeveralEpisodes: Done
 // Follow
-    // checkIfFollowsArtistUser:
+    // checkIfUserFollows:
     // checkIfFollowsPlaylist:
     // followArtistsOrUsers:
     // followPlaylist:
@@ -30,14 +30,14 @@ import axios from 'axios';
     // unfollowArtistOrUser:
     // unfollowPlaylist:
 // Library
-    // checkIfUserSavedAlbum
-    // checkIfUserSavedShow
-    // checkIfUserSavedTrack
-    // getUserSavedAlbums
-    // getUserSavedShows
-    // getUserSavedTracks
+    // checkIfAlbumSaved: Done
+    // checkIfShowSaved: Done
+    // checkIfTrackSaved: Done
+    // getUserSavedAlbums: Done
+    // getUserSavedShows: Done
+    // getUserSavedTracks: Done
     // removeAlbumsFromUser
-    // removeShowFromUser (plural)
+    // removeShowFromUser (plural?)
     // removeTracks
     // saveAlbums
     // saveShows
@@ -50,6 +50,11 @@ import axios from 'axios';
 // Shows
 // Tracks
 // Users profile
+
+// https://dev.to/thomasstep/splitting-javascript-classes-into-different-files-359g
+// https://github.com/neogeek/doxdox#layouts
+
+
 class SpotifyAPI {
     constructor(accessToken) {
         this.accessToken = accessToken
@@ -163,7 +168,7 @@ class SpotifyAPI {
         }
 
         try {
-            let url = 'https://api.spotify.com/v1/browse/categories/' + categoryID + '/play';
+            let url = 'https://api.spotify.com/v1/browse/categories/'
             
             listOfCategories = await axios.get(url, {
                 headers: {
@@ -410,7 +415,7 @@ class SpotifyAPI {
     getArtist = async (artistID) => {
         let artistData;
         try {
-            let url =  'https://api.spotify.com/v1/artists' + artistID
+            let url =  'https://api.spotify.com/v1/artists/' + artistID
             artistData = await axios.get(url, {
                 headers: {
                     'Authorization': 'Bearer ' + this.accessToken
@@ -434,7 +439,7 @@ class SpotifyAPI {
             offset: offset
         }
         try {
-            let url =  'https://api.spotify.com/v1/artists' + artistID + '/albums';
+            let url =  'https://api.spotify.com/v1/artists/' + artistID + '/albums';
             artistAlbums = await axios.get(url, {
                 headers: {
                     'Authorization': 'Bearer ' + this.accessToken
@@ -454,7 +459,7 @@ class SpotifyAPI {
             country: country
         }
         try {
-            let url =  'https://api.spotify.com/v1/artists' + artistID + '/top-tracks';
+            let url =  'https://api.spotify.com/v1/artists/' + artistID + '/top-tracks';
             artistTopTracks = await axios.get(url, {
                 headers: {
                     'Authorization': 'Bearer ' + this.accessToken
@@ -601,15 +606,11 @@ class SpotifyAPI {
     //
     // @returns an object containing top user track's or artists
     // 
-    getUserTopTracks = async (type, limit, offset, timeRange) => {
+    getUserTop = async (type, paramObject) => {
         let userTopTracks;
 
-        let queryParam = {
-            limit: limit,
-            offset: offset,
-            timeRange: timeRange
-        }
-        
+        let queryParam = paramObject;
+
         try {
             let url = 'https://api.spotify.com/v1/me/top/' + type;
             userTopTracks = await axios.get(url, {
@@ -631,7 +632,7 @@ class SpotifyAPI {
 
 
     //
-    // checkIfAlbumSaved()
+    // : Done()
     // 
     // Check if one or more albums is already saved in current Spotify user's 'Your Music' library
     // Link: https://developer.spotify.com/documentation/web-api/reference/library/check-users-saved-albums/
@@ -691,7 +692,7 @@ class SpotifyAPI {
         
         try {
             let url = 'https://api.spotify.com/v1/me/shows/contains';
-            isShowSaved = await axios.get(url, {
+            isShowSavedArray = await axios.get(url, {
                 headers: {
                     'Authorization': 'Bearer ' + this.accessToken
                 },
@@ -702,7 +703,7 @@ class SpotifyAPI {
         } catch (error) {
             console.error('Error caught in checkIfShowSaved function', error);
         }
-        console.log('Is show saved for user?', isShowSaved);
+        console.log('Is show saved for user?', isShowSavedArray);
         return isShowSavedArray;
     }
 
@@ -746,9 +747,9 @@ class SpotifyAPI {
 
 
     // 
-    // getUserSavedAlbums()
-    //
-    // Gets a list of the albums saved in the current spotify user's 'Your Music' library
+    // : Done()
+    //: Done
+    // Gets : Donea list of the albums saved in the current spotify user's 'Your Music' library
     // Link: https://developer.spotify.com/documentation/web-api/reference/library/get-users-saved-albums/
     //
     // @params: limit {integer} (optional): max number of objects to return. default: 20, min: 1, max: 50
@@ -879,10 +880,291 @@ class SpotifyAPI {
         return savedTracks;
     }
 
+    // Follow Endpoints
+
+    // 
+    // Checks to see if the current user is following one or more artists. 
+    // See [Check If Current User Follows Artist or Users](https://developer.spotify.com/documentation/web-api/reference/follow/check-current-user-follows/)
+    // on the Spotify developer site for more information.
+    // 
+    // @param {Array<string>} artistIDs (required) Array of artists' spotify IDs. Max of 5O Ids can be sent in one request.
+    // @example .isFollowingArtists(['74ASZWbe4lXaubB36ztrGX', '08td7MxkoHQkXnWAYD8d6Q']) 
+    //
+    // @return {Object} Containing a JSON array of true or false values, in the same order in which the IDs were specified
+    // 
+    isFollowingArtists = async (artistIDs) => {
+        let isFollowingArtist;
+
+        let queryParam = {
+            type: 'artist',
+            ids: artistIDs.join(',')
+        };
+
+        try {
+            let url = 'https://api.spotify.com/v1/me/following/contains';
+            isFollowingArtist =  await axios.get(url, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.accessToken
+                },
+                params: queryParam
+            })
+        } catch(error) {
+            console.error('Error caught in isFollowingArtists function', error);
+        }
+        return isFollowingArtist;
+    }
+
+    
+    // 
+    // Checks to see if the current user is following one or more users. 
+    // See [Check If Current User Follows Artist or Users](https://developer.spotify.com/documentation/web-api/reference/follow/check-current-user-follows/)
+    // on the Spotify developer site for more information.
+    // 
+    // @param {Array<string>} userIDs (required) Array of users' Spotify IDs. Max of 5O IDs can be sent in one request.
+    // @example .isFollowingUsers(['74ASZWbe4lXaubB36ztrGX', '08td7MxkoHQkXnWAYD8d6Q']) 
+    //
+    // @return {Object} Containing a JSON array of true or false values, in the same order in which the IDs were specified
+    // 
+    isFollowingUsers = async (userIDs) => {
+        let isFollowingUser;
+
+        let queryParam = {
+            type: 'user',
+            ids: userIDs.join(',')
+        }
+
+        try {
+            let url = 'https://api.spotify.com/v1/me/following/contains';
+            isFollowingUser =  await axios.get(url, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.accessToken
+                },
+                params: queryParam
+            })
+        } catch(error) {
+            console.error('Error caught in isFollowingUsers function', error);
+        }
+        return isFollowingUser;
+    }
+
+    // 
+    // 
+    // Checks to see if one or more Spotify users are following a Spotify playlist
+    // See [Check If Users follow Playlist](https://developer.spotify.com/documentation/web-api/reference/follow/check-user-following-playlist/)
+    // on the Spotify developer site for more information.
+    // 
+    // @param {string} playlistID (required) The Spotify ID of the playlist
+    // @param {Array<string>} userIDs (required) Array of users' Spotify IDs. Max of 5 IDs.
+    // @example .isFollowingUsers(['74ASZWbe4lXaubB36ztrGX', '08td7MxkoHQkXnWAYD8d6Q']) 
+    //
+    // @return {Object} Containing a JSON array of true or false values, in the same order in which the IDs were specified
+    // 
+    checkIfUsersFollowPlaylist = async (playlistID, userIDs) => {
+        let areUsersFollowingArray;
+
+        let queryParam = {
+            ids: userIDs.join(','),
+        }
+        try {
+            let url = 'https://api.spotify.com/v1/playlists/'+ playlistID +'/followers/contains'
+            areUsersFollowingArray =  await axios.get(url, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.accessToken
+                },
+                params: queryParam
+            })
+        } catch(error) {
+            console.error('Error caught in checkIfUsersFollowPlaylist function', error);
+        }
+        return areUsersFollowingArray;
+    }
+
+    // 
+    // Important: come back to this, unsure about the query vs. body parameter
+    //
+    // Adds the current user as a follower of one or more artist.
+    // See [Follow Artists or User](https://developer.spotify.com/documentation/web-api/reference/follow/follow-artists-users/)
+    // on the Spotify Developer site for more information
+    //
+    // @param {Array<string>} artistIDs: Array of the artists' Spotify IDs. Maximum of 50 IDs can be sent in one request.
+    // @
+    followArtist = async (artistIDs) => {
+        let serverResponse;
+
+        let queryParam = {
+            type: 'artist',
+            ids: artistIDs
+        }
+        try {
+            let url = 'https://api.spotify.com/v1/me/following'
+            serverResponse =  await axios.put(url, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.accessToken,
+                    'Content-Type': 'application/json',
+                },
+                params: queryParam
+            })
+        } catch(error) {
+            console.error('Error caught in followArtist function', error);
+        }
+        return serverResponse;
+    }
+
+
+    // Same as above
+    followUser = async (spotifyIDs) => {
+        let serverResponse;
+
+        let queryParam = {
+            type: 'user',
+            ids: spotifyIDs
+        }
+        try {
+            let url = 'https://api.spotify.com/v1/me/following'
+            serverResponse =  await axios.put(url, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.accessToken
+                },
+                params: queryParam
+            })
+        } catch(error) {
+            console.error('Error caught in followUser function', error);
+        }
+        return serverResponse;
+    }
+    
+    // 
+    // Adds the current user as a follower of a playlist. More information can be found
+    // at [Follow a Playlist](https://developer.spotify.com/documentation/web-api/reference/follow/follow-playlist/)
+    // on the Spotify Developer Site
+    // 
+    // @param {string} (required) Spotify ID of the playlist. Any playlist can be followed
+    // ,regardless of its private/public status, as long as you know the playlist ID
+    // @param {Object} (optional) You can add an object "public", which is a boolean that'll decide
+    // whether the newly followed playlist should be in the user's public or private playlist.
+    // @example .followPlaylist('2v3iNvBX8Ay1Gt2uXtUKUT', {public: false}) --> Follows the specified playlist 
+    // but don't include this playlist in the current user's public playlists
+    //
+    // @return Response with a header 200 if OK and empty response body. Header status code is error
+    // code if request failed.
+    // 
+    // Important: Should you return an error?
+    // Test that it returns correctly when user follows playlist
+    // 
+    followPlaylist = async (playlistID, queryParam) => {
+        let serverResponse;
+
+        try {
+            let url = `https://api.spotify.com/v1/playlists/${playlistID}/followers`
+            serverResponse =  await axios.put(url, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.accessToken,
+                    'Content-Type': 'application/json'
+                },
+                params: queryParam
+            })
+        } catch(error) {
+            console.error('Error caught in followPlaylist function', error);
+        }
+        return serverResponse;
+    }
+
+    // 
+    // Get the Current User's followed Artists
+    // More information at [Get User's Followed Artists](https://developer.spotify.com/documentation/web-api/reference/follow/get-followed/)
+    //
+    // @param {Object} [options] Object with two optional parameters: limit and after. Limit should be an integer
+    // and represents the max number of items to return. Default: 20, Min: 1, Max: 50. After should be a string and 
+    // represents the last artist ID retrieved from the previous request. After can potentially be understood as having
+    // the same effect as 'offset' in other requests.
+    //
+    // @example .getUserFollowedArtists({limit: 20}) --> Returns 20 first followed artists by the user
+    //
+    // @return {Object} Response object containing the user's followed artists or undefined if request fails.
+    // 
+    // Important: verify info above is true and make sure to mention that undefined is returned when request fails in other functions
+    getUserFollowedArtists = async (queryParam) => {
+        let followedArtist;
+
+        try {
+            let url = 'https://api.spotify.com/v1/me/following?type=artist'
+            followedArtist =  await axios.put(url, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.accessToken,
+                },
+                params: queryParam
+            })
+        } catch (error) {
+            console.error('Error caught in getUserFollowedArtists function', error);
+        }
+        return followedArtist;
+    }
+
+    // IMPORTANT, TEST THIS FUNCTION because you didn't add Content Type in the Header
+    
+    // 
+    // Removes one or more artist from the current user's list of followed artists
+    // More information at [Unfollow Artists or Users](https://developer.spotify.com/documentation/web-api/reference/follow/unfollow-artists-users/)
+    // 
+    // @param {Array<string>}: Array of one or more artists' Spotify IDs
+    //
+    // @return {Object} An object with a status code 204 in the response header and an empty response
+    // body if response body is empty. 
+    //
+    unfollowArtist = async(artistIDs) => {
+        let responseBody;
+
+        let queryParam = {
+            ids: artistIDs.join(',')
+        }
+
+        try {
+            let url = 'https://api.spotify.com/v1/me/following'
+            responseBody = await axios.delete(url, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.accessToken,
+                },
+                params: queryParam
+            })
+
+        } catch (error) {
+            console.error('Error caught in unfollowArtist function', error);
+        }
+
+        return responseBody;
+    }
+
+    // 
+    // Removes the current user as a follower of a playlist
+    // More information at [Unfollow Playlist](https://developer.spotify.com/documentation/web-api/reference/follow/unfollow-playlist/)
+    // 
+    // @param {string}: Playlist's Spotify ID
+    //
+    // @return {Object} An object with a status code 200 and empty response body if requet successful.
+    //
+    unfollowPlaylist = async(playlistID) => {
+        let responseBody;
+
+        try {
+            let url = `https://api.spotify.com/v1/playlists/${playlistID}/followers`
+            responseBody = await axios.delete(url, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.accessToken,
+                },
+            })
+
+        } catch (error) {
+            console.error('Error caught in unfollowPlaylist function', error);
+        }
+
+        return responseBody;
+    }
+
+
 }
 
 function isString (value) {
-    return typeof value === "string" || value instanceof String;
+    return typeof value === 'string' || value instanceof String;
 }
 
 

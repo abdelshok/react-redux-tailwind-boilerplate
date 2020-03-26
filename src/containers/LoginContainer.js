@@ -49,6 +49,8 @@ class LoginContainer extends Component {
             this.getUserSpotifyInfo(hashParams.access_token)
             spotify = new SpotifyAPI(hashParams.access_token)
             spotify.getNewReleases(2, undefined, undefined)
+            let topArtists = spotify.getUserTop("artists", {limit: 10, time_range: "long_term"})
+            console.log('Top artists retrieved successfully from spotify and rendered in react', topArtists);
         }
     }
 
