@@ -55,7 +55,10 @@ import axios from 'axios';
 // PLayer
 // Playlists
 // Search : next
-// Shows : next
+// Shows : 
+    // getShowData
+    // getSeveralShowsData
+    // getShowEpisodes
 // Tracks: next
 // Users profile: next
 
@@ -1364,6 +1367,90 @@ class SpotifyAPI {
         }
 
         return responseBody;
+    }
+
+    // Show-related API Endpoints
+
+    /*
+    *
+    * Get Spotify catalog information for a single show
+    * More details can be found at [Get A Show](https://developer.spotify.com/documentation/web-api/reference/shows/get-a-show/)
+    * 
+    * @param {string} showID The show's Spotify ID
+    * @param {Object} [options] queryParam Optional object containing up to one property "market"
+    * which allows us to return only shows and episodes available in specified market
+    * 
+    * @return {Object} Object containing a repsonse header 200 and an object containing a show Object in JSON format
+    */
+    getShowData = async (showID, queryParam) => {
+        let showData;
+
+        try {
+            let url = `https://api.spotify.com/v1/shows/${showID}`
+            showData = await axios.get(url, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.accessToken,
+                },
+                params: queryParam
+            })
+
+        } catch (error) {
+            console.error('Error caught in getShowData function', error);
+        }
+        return showData;
+    }
+
+    /*
+    *
+    * Get Spotify catalog information for several shows
+    * More details can be found at [Get Several Shows](https://developer.spotify.com/documentation/web-api/reference/shows/get-several-shows/)
+    * 
+    * @param {Array<string>} Array of Spotify ID's for the shows. Max: 50 IDs.
+    * @param {Object} [options] queryParam Optional object containing up to one property "market"
+    * which allows us to return only shows and episodes available in specified market
+    * 
+    * @return {Object} An objecet w/ response header 200 and repsonse body containing a "shows" key whose value 
+    * is an array of shows object in JSON format
+    */
+    getSeveralShowsData = async (showIDs, queryParam) => {
+        let showsData;
+
+        // Important to make sure that this returns undefined
+        let param = {
+            ids: showIDs.join(','),
+            market: queryParam.market
+        }
+
+        try {
+            let url = `https://api.spotify.com/v1/shows`
+            showsData = await axios.get(url, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.accessToken,
+                },
+                params: param
+            })
+
+        } catch (error) {
+            console.error('Error caught in getSeveralShowsData function', error);
+        }
+        return showsData;
+    }    
+
+    getShowEpisodes = async (showID, queryParam) => {
+        let episodes;
+
+        try {
+            let url = `https://api.spotify.com/v1/shows/${showID}/episodes`;
+            episodes = await axios.get(url, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.accessToken,
+                },
+                params: queryParam
+            })
+        } catch (error) {
+            console.error('Error caught in getShowEpisodes function', error);
+        }
+        return episodes;
     }
 
 
