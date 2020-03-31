@@ -20,8 +20,8 @@ import axios from 'axios';
 // Albums: Done
 // Artists: Done
 // Browse: DONE
-    // GetCategory: Done
-    // GetCategoryPlaylists: Done
+    // GetCategory: Done x redone
+    // GetCategoryPlaylists: Done x redone
     // GetListOfCategories: Done
     // GetListOfFeaturedPlaylists: Done
     // GetListOfNewReleases: Done
@@ -44,23 +44,30 @@ import axios from 'axios';
     // getUserSavedAlbums: Done
     // getUserSavedShows: Done
     // getUserSavedTracks: Done
-    // removeAlbumsFromUser
-    // removeShowFromUser (plural?)
-    // removeTracks
-    // saveAlbums
-    // saveShows
-    // saveTracks
+    // removeAlbumsFromUser: done
+    // removeShowFromUser (plural?): done
+    // removeTracks: done
+    // saveAlbums: done
+    // saveShows: done
+    // saveTracks: done
 // PERSONALIZATION: DONE
     // getUserTopTracks: Done
 // PLayer
 // Playlists
 // Search : next
-// Shows : 
-    // getShowData
-    // getSeveralShowsData
-    // getShowEpisodes
+// Shows : Done
+    // getShowData: done
+    // getSeveralShowsData: done
+    // getShowEpisodes: done
 // Tracks: next
+    // getTrackAnalysis: done
+    // getTrackFeatures: done
+    // getSeveralTrackFeatures: done
+    // getSeveralTrackData: almost
+    // getTrackData: done
 // Users profile: next
+    // getCurrentUserProfile
+    // getUserProfile
 
 // https://dev.to/thomasstep/splitting-javascript-classes-into-different-files-359g
 // https://github.com/neogeek/doxdox#layouts
@@ -94,13 +101,13 @@ class SpotifyAPI {
     // @returns an object containing the category information
     //
 
-    getCategory = async (categoryID, country, locale) => {
+    getCategory = async (categoryID, paramObject) => {
         let category;
 
-        let paramObject = {
-            country: country,
-            locale: locale
-        };
+        // let paramObject = {
+        //     country: country,
+        //     locale: locale
+        // };
 
         try {
             let url = 'https://api.spotify.com/v1/browse/categories/' + categoryID;
@@ -114,29 +121,30 @@ class SpotifyAPI {
             console.error('Error returned from Spotify-API in getCategory function', error);
         }
 
-        console.log('Category is', category);
         return category; 
     }
 
 
     //
     // Gets list of Spotify playlists tagged with a particular category
-    // @params: categoryID {string} (required): spotify category ID for the category
-    // @params: country {string} (optional): ISO 3166-1 alpha-2 country code 
-    // @params: limit {integer} (optional): max number of items to return. default: 20, min: 1, max: 50
-    // @params: offset {integer} (optional): index of the first item to return. default: 0. 
+    // @params {string} categoryID (required) Spotify category ID for the category
+    // @param {Object} paramObject [options] Object that can contain up to three optional keys: country, limit,
+    // and offset. "country" should be a string string representing ISO 3166-1 alpha-2 country code.
+    // limit should be an integer representing the max number of items to return. (default: 20, min: 1, max: 50).
+    // offset should be an integer, representing the index of the first item to return (default: 0). 
     // @example:
-    // .getCategoryPlaylists("party", undefined, 20) --> Gets first 20 spotify "party" playlists
-    // @returns an object containing playlists for that category
+    // .getCategoryPlaylists("party", {limit: 20}) --> Gets first 20 spotify "party" playlists
+    // .getCategoryPlaylists("party", {offset: 20, country: 'FR'}) --> Gets party playlists 20-40 from France
+    // @return {Object} An object containing playlists for that category
     // 
-    getCategoryPlaylists = async (categoryID, country, limit, offset) => {
+    getCategoryPlaylists = async (categoryID, paramObject) => {
         let categoryPlaylists;
 
-        let paramObject = {
-            country: country,
-            limit: limit,
-            offset: offset
-        }
+        // let paramObject = {
+        //     country: country,
+        //     limit: limit,
+        //     offset: offset
+        // }
 
         try {
             let url = 'https://api.spotify.com/v1/browse/categories/';
@@ -396,7 +404,7 @@ class SpotifyAPI {
         return albumTracks;
     }
 
-    //
+    //```
     // Retrieves information about several albums
     // Link:https://developer.spotify.com/documentation/web-api/reference/albums/get-several-albums/
     // @params: albumIdStrings {string} (required): comma-separated list of the spotify IDs for the album. max = 20.
@@ -969,9 +977,9 @@ class SpotifyAPI {
     // @return {Object} An object containing a response header 201 (created) if successful. Error code returned if error encoutered.
     // 403 Forbidden is returned if user did not provide authorization.
     //
-    saveAlbums = async (albumIDs) => {
-        let responseBody;
-
+    : done = async (albumIDs) => {
+        le: donet responseBody;
+: done
         let queryParam = {
             ids: albumIDs.join(','),
         };
@@ -986,9 +994,9 @@ class SpotifyAPI {
             })
 
         } catch (error) {
-            console.error('Error caught in saveAlbums function', error);
-        }
-        return responseBody;
+            console.error('Error caught in : done function', error);
+        }: done
+        return : doneresponseBody;
     }
 
     // 
@@ -1214,9 +1222,9 @@ class SpotifyAPI {
     // 
     // @param {string} (required) Spotify ID of the playlist. Any playlist can be followed
     // ,regardless of its private/public status, as long as you know the playlist ID
-    // @param {Object} (optional) You can add an object "public", which is a boolean that'll decide
-    // whether the newly followed playlist should be in the user's public or private playlist.
-    // @example .followPlaylist('2v3iNvBX8Ay1Gt2uXtUKUT', {public: false}) --> Follows the specified playlist 
+    // @param {Object} [options] queryParam You can add an object with the attribute "public", which is a boolean 
+    // that'll decide whether the newly followed playlist should be in the user's public or private playlist.
+    // @example .followPlaylist('2v3iNvBX8Ay1Gt2uXtUKUT', { public: false }) --> Follows the specified playlist 
     // but don't include this playlist in the current user's public playlists
     //
     // @return Response with a header 200 if OK and empty response body. Header status code is error
@@ -1247,7 +1255,7 @@ class SpotifyAPI {
     // Get the Current User's followed Artists
     // More information at [Get User's Followed Artists](https://developer.spotify.com/documentation/web-api/reference/follow/get-followed/)
     //
-    // @param {Object} [options] Object with two optional parameters: limit and after. Limit should be an integer
+    // @param {Object} [options] queryParam Object with two optional parameters: limit and after. Limit should be an integer
     // and represents the max number of items to return. Default: 20, Min: 1, Max: 50. After should be a string and 
     // represents the last artist ID retrieved from the previous request. After can potentially be understood as having
     // the same effect as 'offset' in other requests.
@@ -1453,6 +1461,201 @@ class SpotifyAPI {
         return episodes;
     }
 
+    // Tracks 
+
+    /*
+    * Get Audio Analysis for a Track 
+    * More details can be found at [Get Audio Analysis for a Track](https://developer.spotify.com/documentation/web-api/reference/tracks/get-audio-analysis/)
+    * 
+    * @param {string} trackID Spotify ID for the track
+    * 
+    * @return {Object} An object containing low-level audio analysis of the passed in track. Describes track's structure and musical content, including
+    * rhythm, pitch, and timbre.
+    * 
+    */
+    getTrackAnalysis = async (trackID) => {
+        let trackAnalysis;
+
+        try {
+            let url = `https://api.spotify.com/v1/audio-analysis/${trackID}`;
+            trackAnalysis = await axios.get(url, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.accessToken,
+                }
+            })
+        } catch (error) {
+            console.error(`Error caught in getTrackAnalysis function ${error}`)
+        }
+        return trackAnalysis;
+    }
+
+
+    /*
+    * Get Audio Features for a Track 
+    * More details can be found at [Get Audio Features for a Track](https://developer.spotify.com/documentation/web-api/reference/tracks/get-audio-features/)
+    * 
+    * @param {string} trackID Spotify ID for the track
+    * 
+    * @return {Object} An object containing audio features analysis such as "energy", "danceability", "key", "duration", "speechiness", etc.
+    * 
+    */
+   getTrackFeatures = async (trackID) => {
+        let trackFeatures;
+
+        try {
+            let url = `https://api.spotify.com/v1/audio-features/${trackID}`;
+            trackFeatures = await axios.get(url, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.accessToken,
+                }
+            })
+        } catch (error) {
+            console.error(`Error caught in getTrackFeatures function ${error}`)
+        }
+        return trackFeatures;
+    }
+
+    // #toDo: decide between queryParam and paramObject as var names
+    // #test: what happens if ID has a empty space in middle or beginnign / end?
+
+    /*
+    * Get Audio Features for Several Tracks
+    * More details can be found at [Get Audio Features for Several Tracks](https://developer.spotify.com/documentation/web-api/reference/tracks/get-several-audio-features/)
+    * 
+    * @param {Array<string>} trackIDArray Array of Spotify IDs for the tracks. Maximuim: 100 IDs.
+    * 
+    * @return {Object} An object containing status code (200 if successful) and an object of key "audio_features" that contains an array of audio feature objects
+    * in JSON format
+    * 
+    */
+   getSeveralTrackFeatures = async (trackIDArray) => {
+        let severalTrackFeatures;
+        let paramObject = {
+            ids: trackIDArray.join(','),
+        }
+        try {
+            let url = `https://api.spotify.com/v1/audio-features`;
+            severalTrackFeatures = await axios.get(url, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.accessToken,
+                },
+                params: paramObject
+            })
+        } catch (error) {
+            console.error(`Error caught in getSeveralTrackFeatures function ${error}`)
+        }
+        return severalTrackFeatures;
+    }
+
+
+    // #toFix
+
+    /*
+    * Get Audio Features for Several Tracks
+    * More details can be found at [Get Audio Features for Several Tracks](https://developer.spotify.com/documentation/web-api/reference/tracks/get-several-audio-features/)
+    * 
+    * @param {Array<string>} trackIDArray Array of Spotify IDs for the tracks. Maximum: 50 IDs.
+    * 
+    * @return {Object} An object containing status code (200 if successful) and an object of key "tracks" and whose value is an array of track objects
+    * in JSON format
+    * 
+    */
+    getSeveralTracks = async (trackIDArray, paramObj) => {
+        let severalTracksData;
+        let paramObject = {
+            ids: trackIDArray.join(','),
+        }
+        try {
+            let url = `https://api.spotify.com/v1/audio-features`;
+            severalTracksData = await axios.get(url, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.accessToken,
+                },
+                params: paramObject
+            })
+        } catch (error) {
+            console.error(`Error caught in getSeveralTracks function ${error}`)
+        }
+        return severalTracksData;
+    }
+
+    /*
+    * Get Track Data
+    * More details can be found at [Get a Track](https://developer.spotify.com/documentation/web-api/reference/tracks/get-track/)
+    * 
+    * @param {string} trackIDArray Array of Spotify IDs for the tracks. Maximum: 50 IDs.
+    * @param {Object} [options] paramObject Optional object that can hold a "market" attribute, which represents an ISO 3166-1 alpha-2 
+    * country code 
+    * 
+    * @return {Object} An object containing track data object
+    * 
+    */
+    getTrackData = async (trackID, paramObject) => {
+        let trackData;
+
+        try {
+            let url = `https://api.spotify.com/v1/tracks/${trackID}`;
+            trackData = await axios.get(url, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.accessToken,
+                },
+                params: paramObject
+            })
+        } catch (error) {
+            console.error(`Error caught in getTrackData function ${error}`)
+        }
+        return trackData;
+    }
+
+    /*
+    * Get Current User's Profile 
+    * More details can be found at [Get Current User's Profile](https://developer.spotify.com/documentation/web-api/reference/users-profile/get-current-users-profile/)
+    * 
+    * @return {Object} With status code 200 in the header if successful and user object in JSON format containing current user's data.
+    * Returns error 403 Forbidden if requesting fields that you don't have the user's authorization to access.
+    * 
+    */
+   getCurrentUserProfile = async () => {
+       let currentUserData;
+
+       try {
+           let url = 'https://api.spotify.com/v1/me';
+           currentUserData = await axios.get(url, {
+            headers: {
+                'Authorization': 'Bearer ' + this.accessToken,
+            }
+        })
+       } catch (error) {
+           console.error(`Error caught in getCurrentUserProfile function ${error}`)
+       }
+       return currentUserData;
+   }
+
+   /*
+   * Get a User's Profile
+   * More details can be found at [Get a User's Profile](https://developer.spotify.com/documentation/web-api/reference/users-profile/get-users-profile/)
+   * 
+   * @param {string} userID The user's Spotify user ID
+   * 
+   * @return {Object} An object containing public information about a Spotify user. If error encountered, error code returned. If usre does not exist
+   * code 404 Not Found returned. 
+   * 
+   */
+   getUserData = async (userID) => {
+       let userData;
+
+       try {
+           let url = `https://api.spotify.com/v1/users/${userID}`
+            userData = await axios.get(url, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.accessToken,
+                }
+            })
+       } catch (error) {
+           console.error(`Error encountered in the getUserData function ${error}`);
+       }
+       return userData;
+   }
 
 }
 
