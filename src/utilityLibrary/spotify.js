@@ -53,21 +53,45 @@ import axios from 'axios';
 // PERSONALIZATION: DONE
     // getUserTopTracks: Done
 // PLayer
+    // getUserDevices
+    // getDataOnCurrentPlayback
+    // getRecentlyPlayedTracks
+    // getCurrentlyPlayedTrack
+    // pauseUserPlayback
+    // seekToPositionInPlayback
+    // setPlaybackOnRepeat
+    // setVolumeForUserPlayback
+    // skipToNextTrack
+    // skipToPreviousTrack
+    // startUserPlayback
+    // toggleShuffleForUserPlayback
+    // transferUserPlayback
 // Playlists
+    // addTrackToPlaylist: done
+    // changePlaylistDetails: done
+    // getListOfCurrentUserPlaylists: done
+    // getListOfUserPlaylist: done
+    // getPlaylist: done
+    // getPlaylistCover: done
+    // getPlaylistTracks: done
+    // removeTracksFromPlaylist: done
+    // reorderPlaylistTracks: done
+    // replacePlaylistTracks: done
+    // uploadPlaylistCover: done
 // Search : next
 // Shows : Done
     // getShowData: done
     // getSeveralShowsData: done
     // getShowEpisodes: done
-// Tracks: next
+// Tracks: almost
     // getTrackAnalysis: done
     // getTrackFeatures: done
     // getSeveralTrackFeatures: done
     // getSeveralTrackData: almost
     // getTrackData: done
-// Users profile: next
-    // getCurrentUserProfile
-    // getUserProfile
+// Users profile: done
+    // getCurrentUserProfile: done
+    // getUserProfile: done
 
 // https://dev.to/thomasstep/splitting-javascript-classes-into-different-files-359g
 // https://github.com/neogeek/doxdox#layouts
@@ -628,25 +652,419 @@ class SpotifyAPI {
     getUserTop = async (type, paramObject) => {
         let userTopTracks;
 
-        let queryParam = paramObject;
-
         try {
             let url = 'https://api.spotify.com/v1/me/top/' + type;
             userTopTracks = await axios.get(url, {
                 headers: {
                     'Authorization': 'Bearer ' + this.accessToken
                 },
-                params: queryParam
+                params: paramObject
             })
         } catch(error) {
-            console.error('Error caught in getUserTopTracks function', error)
+            console.error(`Error caught in getUserTopTracks function: ${error}`)
         }
 
-        console.log('User top tracks returned are', userTopTracks);
         return userTopTracks;
     }
 
+    // Playlists API Endpoints //
 
+    /*
+    * Add Tracks to a Playlist
+    * More details at [Add Tracks to a Playlist](https://developer.spotify.com/documentation/web-api/reference/playlists/add-tracks-to-playlist/)
+    * 
+    * @param {string} playlistID Spotify ID for the playlist
+    * @param {Array<string>} trackIDArray [options] Array of track ID strings
+    * @param {Object} [options] paramObject Optional param object that contains a "position" attribute, which is an integer
+    * representing the position where to insert the tracks. Uses zero-based index, so position = 0 is equivalent to inserting 
+    * tracks in the first position 
+    * 
+    * @return {Object} Object with status code 201 in the response header for created. Trying to add track when you don't have
+    * user permissions or when there are more than 10,000 tracks in playlist returns error 403.
+    */
+    addTracksToPlaylist = async(playlistID, trackIDArray, paramObject) => {
+        let addTrackResponse;
+
+
+        let paramObject = {
+            uris: trackIDArray.join(','),
+            position: paramObject == undefined ? undefined : paramObject.position,
+        }
+        // Or post?
+
+        try {
+            let url = `https://api.spotify.com/v1/playlists/${playlistID}/tracks`;
+            addTrackResponse = await axios.post(url, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.accessToken
+                },
+                params: queryParam
+            })
+        } catch(error) {
+            console.error(`Error caught in addTracksToPlaylist function ${error}`);
+        }
+        return addTrackResponse;
+    }
+
+    /*
+    *
+    * Change Playlist's Details
+    * More details [here](https://developer.spotify.com/documentation/web-api/reference/playlists/change-playlist-details/)
+    * 
+    * @param {string} playlistID Spotify ID of the playlist
+    * @param {Object} optionalParam Optional object that can contain up to four attributes: name (string), public (boolean), collaborative(boolean)
+    * and description (string). name is the new name for teh playlist, setting public to true will make the playlist public, setting it to false will make
+    * it private. setting collaborative to true will make the playlist collaborative. finally, adding a description will change the description of the playlist.
+    * 
+    * @return {Object} Object with status code 200 if successful. Error object if unsuccessful. 
+    * 
+    */
+
+    changePlaylistDetails = async (playlistID, optionalParam) => {
+        let responseObject;
+
+        try {
+            let url = `https://api.spotify.com/v1/playlists/${playlistID}`;
+            responseObject = await axios.put(url, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.accessToken,
+                    'Content-Type': 'application/json',
+                },
+                data: {
+                    name: optionalParam != undefined && optionalParam.name ? optionalParam.name : undefined,
+                    public: optionalParam != undefined && optionalParam.public ? optionalParam.public : undefined,
+                    collaborative: optionalParam != undefined && optionalParam.collaborative ? optionalParam.collaborative : undefined,
+                    description: optionalParam != undefined && optionalParam.description ? optionalParam.description : undefined,
+                }
+            })
+        } catch (error) {
+            return error;
+        }
+        return responseObject;
+    }
+
+    /*
+    *
+    * Create a Playlist
+    * More details [here](https://developer.spotify.com/documentation/web-api/reference/playlists/create-playlist/)
+    * 
+    * @param {string} userID User's Spotify ID
+    * @param {string} name Name for the new playlist. E.g. "Calabasas Banger$ Playlist"
+    * @param {Object} [options] Optional object that can contain up to three attributes: public (boolean), collaborative(boolean) and 
+    * description (string). setting public to true will make the playlist public, setting it to false will make  it private. setting
+    * collaborative to true will make the playlist collaborative. finally, adding a description will change the description of the 
+    * playlist.
+    * 
+    * @return {Object} Containing the playlist object in JSON format and status code 200 or 201 (created) if request successful.
+    * Error object returned if unsuccessful.
+    * 
+    */
+
+    createPlaylist = async (userID, name, optionalParam) => {
+        let responseObject;
+        try {
+            let url = `https://api.spotify.com/v1/users/${userID}/playlists`;
+            responseObject = await axios.post(url, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.accessToken,
+                    'Content-Type': 'application/json',
+                },
+                data: {
+                    name: name,
+                    public: optionalParam != undefined && optionalParam.public ? optionalParam.public : undefined,
+                    collaborative: optionalParam != undefined && optionalParam.collaborative ? optionalParam.collaborative : undefined,
+                    description: optionalParam != undefined && optionalParam.description ? optionalParam.description : undefined,
+                }
+            })
+        } catch (error) {
+            return error;
+        }  
+        return responseObject;
+    } 
+
+
+    /*
+    * Get a List of Current User's Playlists
+    * More details at [Get List of Current User's Playlist](https://developer.spotify.com/documentation/web-api/reference/playlists/get-a-list-of-current-users-playlists/)
+    * 
+    * @param {Object} [optional] Optional object that can contain up to two attributes "limit", an integer representing the max number of playlists to return 
+    * (max: 50, default: 20, min: 1) and "offset", which is the index of the first playlist to return (Default: 0, Max offset: 100,000)
+    * 
+    * @return {Object} Object with status code 200 OK in response header and response body contains an array of simplified playlist objects in JSON format
+    * 
+    */
+   getCurrentUserPlaylist = async (paramObject) => {
+        let currentUserPlaylist;
+
+        try {
+            let url = 'https://api.spotify.com/v1/me/playlists'
+            currentUserPlaylist = await axios.get(url, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.accessToken
+                },
+                params: paramObject 
+            })
+        } catch (error) {
+            console.error(`Error found in getCurrentUserPlaylist function ${error}`)
+        }
+        return currentUserPlaylist;
+   }
+
+    /*
+    * Get a List of Public User's Playlists
+    * More details at [Get List of User's Playlist](https://developer.spotify.com/documentation/web-api/reference/playlists/get-list-users-playlists/)
+    * 
+    * @param {Object} [optional] Optional object that can contain up to two attributes "limit", an integer representing the max number of playlists to return 
+    * (max: 50, default: 20, min: 1) and "offset", which is the index of the first playlist to return (Default: 0, Max offset: 100,000)
+    * 
+    * @return {Object} Object with status code 200 OK in response header and response body contains an array of simplified playlist objects in JSON format
+    * 
+    */
+   getUserPlaylist = async (userID, paramObject) => {
+        let userPlaylist;
+
+        try {
+            let url = `https://api.spotify.com/v1/users/${userID}/playlists`
+            userPlaylist = await axios.get(url, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.accessToken
+                },
+                params: paramObject 
+            })
+        } catch (error) {
+            console.log(`Error found in getUserPlaylist function ${userPlaylist}`)
+        }
+        return userPlaylist;
+   } 
+
+   /*
+   *
+   * Get Playlist 
+   * More details can be found at [Get a Playlist](https://developer.spotify.com/documentation/web-api/reference/playlists/get-playlist/)
+   * 
+   * @param {string} playlistID Spotify ID for the playlist
+   * @param {Object} paramObject [options] Optional object that can contain up to three attributes 1. "fields" (string), which is a comma-separated
+   * list of the fields to return. e.g. 'descriptio, uri'., 2. 'market' (string), represneting an ISO 3166-1 alpha-2 country code,
+   * and 3. "additional_types", which is a comma-separated list of item types that your client supports (valid types are 'track' and 'episode')
+   * 
+   * @return {Object} An object which contains a playlist object in JSON format and HTTP status code in header 200 if response successful.
+   * 
+   */
+   getPlaylist = async (playlistID, paramObject) => {
+       let playlist;
+
+       try {
+           let url = `https://api.spotify.com/v1/playlists/${playlistID}`
+           playlist = await axios.get(url, {
+            headers: {
+                'Authorization': 'Bearer ' + this.accessToken
+            },
+            params: paramObject 
+        })
+       } catch (error) {
+           console.log(`Error found in getPlaylist function ${error}`)
+       }
+       return playlist;
+   }
+
+
+   /*
+   * Get a Playlist Cover Image
+   * More details can be found at [Get a Playlist Cover Image](https://developer.spotify.com/documentation/web-api/reference/playlists/get-playlist-cover/)
+   * 
+   * @param {string} playlistID Spotify ID for the playlist
+   * 
+   * @return {Object} A list of image objects in JSON format if request successful. Object with error code in header and error object if unsuccessful.
+   */
+   getPlaylistCoverImage = async (playlistID) => {
+        let playlistImage;
+
+        try {
+            let url = `https://api.spotify.com/v1/playlists/${playlistID}/images`
+            playlistImage = await axios.get(url, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.accessToken
+                }
+            })
+        } catch (error) {
+            console.error(`Error found in getPlaylistCoverImage function ${error}`);
+        }
+        return playlistImage;
+   }
+
+
+   /*
+   *
+   * Get a Playlist's tracks
+   * More details can be found at [Get a Playlist's Tracks]()
+   * 
+   * @param {string} playlistID Spotify ID for the playlist
+   * @param {Object} queryParam Objec containingoptional parameters that can be passed in, including
+   * "fields", "limit", "offset", "market", "additional_types"
+   * @example
+   * .getPlaylistTracks('21THa8j9TaSGuXYNBU5tsC', {limit: 50}) --> Gets 50 tracks from passed in playlist
+   * 
+   * @return {Object} On success, response body contains an arra of track objects and episode objects (depending on additional_types parameter)
+   * On error code, error code in header and error object in response body.
+   * 
+   */
+   getPlaylistTracks = async (playlistID, queryParam) => {
+       let playlistTracks;
+
+       try {
+            let url = `https://api.spotify.com/v1/playlists/${playlistID}/tracks`
+            playlistTracks = await axios.get(url, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.accessToken
+                },
+                params: queryParam
+            })
+        } catch (error) {
+           console.error(`Error encountered in getPlaylistTracks function ${error}`);
+       }
+       return playlistTracks;
+   }
+
+
+   /*
+   *
+   * Remove Track From Playlist
+   * More details can be found at [Remove Track From Playlist]
+   * 
+   * @param {string} playlistID Spotify ID of the playlist
+   * @param {Array<string>} trackURIArray Array of the track's URIs e.g. ["spotify:track:4iV5W9uYEdYUVa79Axb7Rh", "spotify:track:1301WleyT98MSxVHPZCA6M" ]
+   * 
+   * @return An object containing "snapshot_id" in JSON format and success status 200 if successful.
+   * "snapshot_id" can be used to identify playlsit version in future requests.  If bad request, 400 returned,
+   * if forbidden request, 403 returned in error object.
+   */
+   removeTracksFromPlaylist = async (playlistID, trackURIArray) => {
+        let responseObject;
+        let newTrackArray = trackURIArray.map((uri) => {
+            if (typeof uri === 'string') {
+                return {uri: uri};
+            } else {
+                return uri;
+            }
+        })
+
+        try {
+            let url = `https://api.spotify.com/v1/playlists/${playlistID}/tracks`;
+            responseObject = await axios.delete(url, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.accessToken,
+                    'Content-Type': 'application/json',
+                },
+                data: {
+                    tracks: newTrackArray
+                }
+            })
+        } catch (error) {
+            console.error(`Error encountered in removeTrackFromPlaylist ${error} `)
+        }
+        return responseObject;
+   }
+
+   /*
+   *
+   * Reorder a Playlist's Tracks
+   * More information can be found at [Reorder a Playlist's Tracks](https://developer.spotify.com/documentation/web-api/reference/playlists/reorder-playlists-tracks/)
+   * 
+   * @param {string} playlistID Spotify ID for the playlist
+   * @param {integer} rangeStart Position of the first track to be reordered
+   * @param {integer} insertBefore Position where the track/tracks should be inserted.
+   * @param {Object} optionalParam Optional object that can contain up to two attributes: 'insertBefore' and 'snapshotID'.
+   * 'insertBefore' represents the position (integer) where the track/tracks should be inserted. 'snapshotId' represents the playlist's
+   * snapshotID (string) against which you want to make changes
+   * 
+   * @return {Object} Containing a snapshot_id in JSON format and the HTTP status code in response header is 200 OK. If error, error object returned.
+   */
+
+  // #toDo: change all optional parameters to optionalParam
+
+   reorderPlaylistTracks = async (playlistID, rangeStart, insertBefore, optionalParam) => {
+       let responseObject;
+       try {
+           let url = `https://api.spotify.com/v1/playlists/${playlistID}/tracks`;
+           responseObject = await axios.put(url, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.accessToken,
+                    'Content-Type': 'application/json',
+                },
+                data: {
+                    range_start: rangeStart,
+                    insert_before: insertBefore,
+                    range_length: optionalParam != undefined && optionalParam.rangeLength ? optionalParam.rangeLength : undefined,
+                    snapshot_id: optionalParam != undefined && optionalParam.snapshotID ? optionalParam.snapshotID : undefined,
+                }
+           })
+       } catch (error) {
+           console.error(`Error encountered in reorderPlaylistTracks ${responseObject}`);
+       }
+       return responseObject;
+    }
+
+    /*
+    *
+    * Replace a Playlist's Tracks
+    * More details [here](https://developer.spotify.com/documentation/web-api/reference/playlists/replace-playlists-tracks/)
+    * 
+    * @param {string} playlistID Spotify ID for the playlist
+    * @param {Array<string>} trackURIArray Array of track URIs that will be in the playlist selected
+    * 
+    * @response {Object} With status code 201 in header if successful. Error object with error code returned if unsuccessful.
+    * 
+    */
+    replacePlaylistTracks = async (playlistID, trackURIArray) => {
+        let responseObject;
+
+        let queryParam = {
+            uris: trackURIArray.join(',')
+        }
+
+        try {
+            let url = `https://api.spotify.com/v1/playlists/${playlistID}/tracks`;
+            responseObject = await axios.put(url, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.accessToken
+                },
+                params: queryParam
+            })
+        } catch (error) {
+            return error;
+        }
+        return responseObject;
+    }
+
+    // #toFix #toDo: maybe data is wrong thing, maybe it's body taht I need to put instead
+
+    /*
+    *
+    * Upload Playlist Cover Image
+    * More details can be found [here](https://developer.spotify.com/documentation/web-api/reference/playlists/create-playlist/)
+    * 
+    * @param {string} playlistID Spotify ID for the playlist
+    * @param {string} imageJPEG Base64 encoded JPEG image data, max payload size is 256 KB.
+    * 
+    * 
+    */
+    uploadPlaylistImage = async(playlistID, imageJPEG) => {
+        let responseObject;
+
+        try {
+            let url = `https://api.spotify.com/v1/playlists/${playlistID}/images`;
+            responseObject = await axios.put(url,{
+                headers: {
+                    'Authorization': 'Bearer ' + this.accessToken,
+                    'Content-Type': 'image/jpeg',
+                },
+                body: imageJPEG
+            })
+        } catch (error) {
+            return error;
+        }
+        return responseObject;
+    }
     // LIBRARY API ENDPOINTS
 
 
@@ -1656,6 +2074,8 @@ class SpotifyAPI {
        }
        return userData;
    }
+
+
 
 }
 
