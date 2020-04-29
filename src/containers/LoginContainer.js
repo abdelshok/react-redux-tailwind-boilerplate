@@ -47,6 +47,10 @@ const LogoWrapper = styled.div`
     align-items: center;
 `;
 // background-image: url(${SpotifyLogo});
+// Alernate blue-lavender colored animated background:
+// background: linear-gradient(270deg, #acc4ef, #b3abf0);
+
+
 
 const TitleText = styled.div`
     text-align: center;
@@ -74,7 +78,7 @@ const SpotifyLogoLineWrapper = styled.div`
 const SpotifyLogoLargeLine = styled.div`
     width: 100%;
     height: 8px;
-    background-color: white;
+    background-color: #ECF0F3;
     border-radius: 5px;
     margin-bottom: 2px;
     margin-top: 5px;
@@ -107,18 +111,30 @@ const NeumorphicLoginButton = styled.button`
     font-family: LatoRegular, sans-serif;
     color: #FFF;
     text-align: center;
-    background: #7CE199;
     box-shadow: 3px 3px 8px #B1B1B1, -3px -3px 8px #FFFFFF;
     transition: 0.5s;
+    margin: 0 auto;
+    margin-top: 150px;
+    background: #7CE199;
+
     &:hover {
         background: #96fab3;
     }
     &:active {
         background: #74c28b;
-    }
-    margin: 0 auto;
-    margin-top: 150px;
+    };
 `
+
+// Alternate blue-purple color:
+
+// background: #b3abf0;
+// &:hover {
+//     background: #beb5ff;
+// }
+// &:active {
+//     background: #a29adb;
+// }
+
 
 // Alternate shadow color: #B1B1B1
 
@@ -151,7 +167,14 @@ class LoginContainer extends Component {
             this.authenticateUser(true)
             let spotify = new SpotifyAPI(hashParams.access_token)
             let playlist = await spotify.getCurrentUserPlaylist()
-            console.log('Current user playlist', playlist);
+            let userInformation = await spotify.getCurrentUserProfile();
+            
+            // Dispatch user data object to be stored in redux store (one-level of nesting)
+            // Another way to do it wouldbe to extract the different data points (email, id, display_name) and store them
+            // individually, to avoid nesting.
+            const userData = userInformation.data;
+            store.dispatch(storeUserData(userData));
+            console.log('Current user information', userInformation);
         }
     }
 

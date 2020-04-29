@@ -11,7 +11,7 @@ import Log from './utilityLibrary/dev/logging'
 // Redux
 import store from './store/store'
 // Containers
-import App from './containers/App';
+import App from './App';
 
 require('dotenv').config(); // Allows us to access our variables in the .env file of our root directory
 
