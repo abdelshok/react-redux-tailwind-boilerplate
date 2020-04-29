@@ -36,7 +36,8 @@ const LogoWrapper = styled.div`
     height: 100px;
     border-radius: 50%;
     margin: 0 auto;
-    background: linear-gradient(180deg, #0ac14b, #d1f9d2);    background-size: 600% 600%;
+    background: linear-gradient(180deg, #0ac14b, #d1f9d2);  
+    background-size: 600% 600%;
     -webkit-animation: ${logoAnimation} 2s ease infinite;
     -moz-animation: ${logoAnimation} 2s ease infinite;
     animation: ${logoAnimation} 2s ease infinite;
@@ -75,7 +76,7 @@ const SpotifyLogoLargeLine = styled.div`
     height: 8px;
     background-color: white;
     border-radius: 5px;
-    margin-bottom: 4px;
+    margin-bottom: 2px;
     margin-top: 5px;
 `
 
@@ -93,6 +94,33 @@ const SpotifyLogoSmallLine = styled(SpotifyLogoMediumLine)`
     width: 50%;
     height: 7px;
 `
+
+const NeumorphicLoginButton = styled.button`
+    outline: none;
+    border: none;
+    cursor: pointer;
+    width: 80%;
+    height: 40px;
+    border-radius: 30px;
+    font-size: 16px;
+    font-weight: 700;
+    font-family: LatoRegular, sans-serif;
+    color: #FFF;
+    text-align: center;
+    background: #7CE199;
+    box-shadow: 3px 3px 8px #B1B1B1, -3px -3px 8px #FFFFFF;
+    transition: 0.5s;
+    &:hover {
+        background: #96fab3;
+    }
+    &:active {
+        background: #74c28b;
+    }
+    margin: 0 auto;
+    margin-top: 150px;
+`
+
+// Alternate shadow color: #B1B1B1
 
 // Change the Login URI so that the domain is chosen depending on the
 // environment that we're in, production and development
@@ -174,11 +202,13 @@ class LoginContainer extends Component {
                         <SpotifyLogoLargeLine />
                         <SpotifyLogoMediumLine />
                         <SpotifyLogoSmallLine />
-
                     </SpotifyLogoLineWrapper>
                 </LogoWrapper>
                 <TitleText> Spotify </TitleText>
-                <SubTitleText> Login </SubTitleText>
+                <SubTitleText> Boilerplate </SubTitleText>
+                <NeumorphicLoginButton onClick={this.connectToSpotify}>
+                    Login
+                </NeumorphicLoginButton>
             </NeumorphicLoginWrapper>
         )
     }

@@ -20,3 +20,8 @@ html {
 #root {
   height: 100%;
 }
+
+@font-face {
+  font-family: 'LatoRegular';
+  src: local('LatoRegular'), url(./fonts/LatoRegular.ttf) format('truetype');
+}

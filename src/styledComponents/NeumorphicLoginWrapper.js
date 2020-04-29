@@ -9,6 +9,8 @@ const NeumorphicLoginWrapper = styled.div`
     border-radius: 40px;
     box-shadow: 13px 13px 20px #CBCED1, -13px -13px 20px #FFFFFF;
     background-color: #ECF0F3;
+    display: flex;
+    flex-direction: column;
 `
 
 // #EBECF1
