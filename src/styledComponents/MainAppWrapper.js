@@ -5,7 +5,7 @@ import styled from 'styled-components';
 const MainAppWrapper = styled.div`
     width: 100%;
     height: 100%;
-    background-color: red;
+    background-color: #ECF0F3;
     border-style: solid;
     border-width: 10px;
     border-color: black;

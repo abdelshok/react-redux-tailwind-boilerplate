@@ -5,8 +5,11 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import qs from 'qs';
+import styled, { keyframes } from 'styled-components';
 // Internal Modules
 import { authenticateUser, storeUserData, storeAccessToken } from '../actionCreators/actions';
+import NeumorphicLoginWrapper from '../styledComponents/NeumorphicLoginWrapper';
+
 import store from '../store/store';
 
 // Styled Components
@@ -18,6 +21,78 @@ import TextVideoComponent from '../components/TextVideoComponent';
 
 // Utility Functions
 import SpotifyAPI from '../utilityLibrary/spotify';
+
+const SpotifyLogo = require('../assets/logos/spotifyLogo.jpg');
+
+
+const logoAnimation = keyframes`
+    0%{background-position:0% 61%}
+    50%{background-position:100% 40%}
+    100%{background-position:0% 61%}
+`;
+
+const LogoWrapper = styled.div`
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin: 0 auto;
+    background: linear-gradient(180deg, #0ac14b, #d1f9d2);    background-size: 600% 600%;
+    -webkit-animation: ${logoAnimation} 2s ease infinite;
+    -moz-animation: ${logoAnimation} 2s ease infinite;
+    animation: ${logoAnimation} 2s ease infinite;
+    box-shadow: 0px 0px 2px #ECF0F3, 0px 0px 0px 5px #ECF0F3, 8px 8px 15px #A7AAAF, -8px -8px 15px #FFFFFF;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+`;
+// background-image: url(${SpotifyLogo});
+
+const TitleText = styled.div`
+    text-align: center;
+    font-size: 28px;
+    padding-top: 24px;
+    letter-spacing: 0.5px;
+`;
+
+const SubTitleText = styled.div`
+    text-align: center;
+    font-size: 15px;
+    padding-top: 7px;
+    letter-spacing: 3px;
+`;
+
+const SpotifyLogoLineWrapper = styled.div`
+    width: 50%;
+    background-color: transparent;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+`
+
+const SpotifyLogoLargeLine = styled.div`
+    width: 100%;
+    height: 8px;
+    background-color: white;
+    border-radius: 5px;
+    margin-bottom: 4px;
+    margin-top: 5px;
+`
+
+// border-top-left-radius: 20px;
+// border-top-right-radius: 20px;
+
+const SpotifyLogoMediumLine = styled(SpotifyLogoLargeLine)`
+    width: 70%;
+    height: 7px
+    margin-top: 0px;
+
+`
+
+const SpotifyLogoSmallLine = styled(SpotifyLogoMediumLine)`
+    width: 50%;
+    height: 7px;
+`
 
 // Change the Login URI so that the domain is chosen depending on the
 // environment that we're in, production and development
@@ -88,11 +163,23 @@ class LoginContainer extends Component {
     }
     render() {
         return (
-            <LoginWrapper>
-            <AnimatedText> Spotify API </AnimatedText>
-            <SmallHeaderText> React-Redux boilerplate for your Spotify-API-based application </SmallHeaderText>
-            <SpotifyButton onClick={this.connectToSpotify} > Login </SpotifyButton>
-            </LoginWrapper>    
+            // <LoginWrapper>
+            // <AnimatedText> Spotify API </AnimatedText>
+            // <SmallHeaderText> React-Redux boilerplate for your Spotify-API-based application </SmallHeaderText>
+            // <SpotifyButton onClick={this.connectToSpotify} > Login </SpotifyButton>
+            // </LoginWrapper>    
+            <NeumorphicLoginWrapper>
+                <LogoWrapper>
+                    <SpotifyLogoLineWrapper>
+                        <SpotifyLogoLargeLine />
+                        <SpotifyLogoMediumLine />
+                        <SpotifyLogoSmallLine />
+
+                    </SpotifyLogoLineWrapper>
+                </LogoWrapper>
+                <TitleText> Spotify </TitleText>
+                <SubTitleText> Login </SubTitleText>
+            </NeumorphicLoginWrapper>
         )
     }
 }
