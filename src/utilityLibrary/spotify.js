@@ -686,7 +686,7 @@ class SpotifyAPI {
         let addTrackResponse;
 
 
-        let paramObject = {
+        let queryParam = {
             uris: trackIDArray.join(','),
             position: paramObject == undefined ? undefined : paramObject.position,
         }
@@ -1395,27 +1395,6 @@ class SpotifyAPI {
     // @return {Object} An object containing a response header 201 (created) if successful. Error code returned if error encoutered.
     // 403 Forbidden is returned if user did not provide authorization.
     //
-    : done = async (albumIDs) => {
-        le: donet responseBody;
-: done
-        let queryParam = {
-            ids: albumIDs.join(','),
-        };
-
-        try {
-            let url = 'https://api.spotify.com/v1/me/albums'
-            responseBody = await axios.put(url, {
-                headers: {
-                    'Authorization': 'Bearer ' + this.accessToken,
-                },
-                params: queryParam
-            })
-
-        } catch (error) {
-            console.error('Error caught in : done function', error);
-        }: done
-        return : doneresponseBody;
-    }
 
     // 
     // Save one or more shows to the current user's library

@@ -1,7 +1,7 @@
 // Reducer that will contain all spotify related actions and states
 // ie. User's favorite album, personal data, currently playing song, playlist, etc.
 
-import {STORE_USER_DATA } from '../actionCreators/constants';
+import { STORE_USER_DATA } from '../actionCreators/constants';
 
 const initialState = {
     userData: false,

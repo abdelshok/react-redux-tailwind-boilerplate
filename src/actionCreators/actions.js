@@ -1,6 +1,7 @@
 import {
     AUTHENTICATE_USER,
-    STORE_USER_DATA
+    STORE_USER_DATA,
+    STORE_ACCESS_TOKEN,
 } from './constants';
 
 export const authenticateUser = (state) => ({
@@ -13,3 +14,7 @@ export const storeUserData = (state) => ({
     userData: state
 })
 
+export const storeAccessToken = (state) => ({
+    type: STORE_ACCESS_TOKEN,
+    accessToken: state
+})

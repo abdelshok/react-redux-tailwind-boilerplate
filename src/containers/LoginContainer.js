@@ -6,7 +6,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import qs from 'qs';
 // Internal Modules
-import { authenticateUser, storeUserData } from '../actionCreators/actions';
+import { authenticateUser, storeUserData, storeAccessToken } from '../actionCreators/actions';
 import store from '../store/store';
 
 // Styled Components
@@ -18,8 +18,6 @@ import TextVideoComponent from '../components/TextVideoComponent';
 
 // Utility Functions
 import SpotifyAPI from '../utilityLibrary/spotify';
-
-let spotify;
 
 // Change the Login URI so that the domain is chosen depending on the
 // environment that we're in, production and development
@@ -34,7 +32,7 @@ class LoginContainer extends Component {
     // After the function connectToSpotify below is called because of a user click, the componentDidMount function is
     // called again and sets in the hashParams variable to be equal to an object containing the access_token attribute
     // which we need to use in future API calls to retrieve the data  we want
-    componentDidMount = () => {
+    componentDidMount = async () => {
         let hashParams = {}
         let e,
         r = /([^&;=]+)=?([^&;]*)/g,
@@ -45,12 +43,12 @@ class LoginContainer extends Component {
 
         // Change authentication state to true and retrieve user spotify information in order to display main page 
         if (hashParams.access_token) {
+            let accessToken = hashParams.access_token;
+            store.dispatch(storeAccessToken(accessToken));
             this.authenticateUser(true)
-            this.getUserSpotifyInfo(hashParams.access_token)
-            spotify = new SpotifyAPI(hashParams.access_token)
-            spotify.getNewReleases(2, undefined, undefined)
-            let topArtists = spotify.getUserTop("artists", {limit: 10, time_range: "long_term"})
-            console.log('Top artists retrieved successfully from spotify and rendered in react', topArtists);
+            let spotify = new SpotifyAPI(hashParams.access_token)
+            let playlist = await spotify.getCurrentUserPlaylist()
+            console.log('Current user playlist', playlist);
         }
     }
 
