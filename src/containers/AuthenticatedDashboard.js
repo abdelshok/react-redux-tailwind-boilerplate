@@ -7,6 +7,9 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 // Internal Modules
 import NeumorphicLoginWrapper from '../styledComponents/NeumorphicLoginWrapper';
+import NeumorphicLoginButton from '../styledComponents/NeumorphicLoginButton';
+import { signOutUser,removeAccessToken } from '../actionCreators/actions';
+import store from '../store/store';
 
 
 const loadingAnimation = keyframes`
@@ -77,12 +80,14 @@ class AuthenticatedDashboard extends Component {
         }
     }
 
+    handleSignOut = () => {
+        store.dispatch(signOutUser());
+        store.dispatch(removeAccessToken());
+    }
+
     render() {
-        console.log('Dashboard rendered');
-        console.log('Dashboard props', this.props);
         const { userData } = this.props;
         const userImage = userData.images ? userData.images[0].url : '';
-        console.log('User data', userData);
         const displayName = userData.display_name ? userData.display_name : 'No name yet';
         const  email = userData.email ? userData.email : '';
         const followerCount = userData.followers ? userData.followers.total : 'No';
@@ -95,6 +100,9 @@ class AuthenticatedDashboard extends Component {
                     <TitleText imageLoaded={userImage} > {displayName} </TitleText>
                     <SubTitleText imageLoaded={userImage}> { followerCount !== '' && followerSentence} </SubTitleText>
                 </TextWrapper>
+                <NeumorphicLoginButton onClick={this.handleSignOut}>
+                    Sign out
+                </NeumorphicLoginButton>
             </NeumorphicLoginWrapper>
         )
     }

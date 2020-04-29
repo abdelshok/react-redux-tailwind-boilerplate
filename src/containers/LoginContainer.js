@@ -9,20 +9,11 @@ import styled, { keyframes } from 'styled-components';
 // Internal Modules
 import { authenticateUser, storeUserData, storeAccessToken } from '../actionCreators/actions';
 import NeumorphicLoginWrapper from '../styledComponents/NeumorphicLoginWrapper';
-
+import NeumorphicLoginButton from '../styledComponents/NeumorphicLoginButton';
 import store from '../store/store';
-
-// Styled Components
-import LoginWrapper from '../styledComponents/LoginWrapper';
-import AnimatedText from '../styledComponents/AnimatedText';
-import SmallHeaderText from '../styledComponents/SmallHeaderText';
-import SpotifyButton from '../styledComponents/SpotifyButton';
-import TextVideoComponent from '../components/TextVideoComponent';
 
 // Utility Functions
 import SpotifyAPI from '../utilityLibrary/spotify';
-
-const SpotifyLogo = require('../assets/logos/spotifyLogo.jpg');
 
 
 const logoAnimation = keyframes`
@@ -49,8 +40,6 @@ const LogoWrapper = styled.div`
 // background-image: url(${SpotifyLogo});
 // Alernate blue-lavender colored animated background:
 // background: linear-gradient(270deg, #acc4ef, #b3abf0);
-
-
 
 const TitleText = styled.div`
     text-align: center;
@@ -83,7 +72,6 @@ const SpotifyLogoLargeLine = styled.div`
     margin-bottom: 2px;
     margin-top: 5px;
 `
-
 // border-top-left-radius: 20px;
 // border-top-right-radius: 20px;
 
@@ -99,34 +87,7 @@ const SpotifyLogoSmallLine = styled(SpotifyLogoMediumLine)`
     height: 7px;
 `
 
-const NeumorphicLoginButton = styled.button`
-    outline: none;
-    border: none;
-    cursor: pointer;
-    width: 80%;
-    height: 40px;
-    border-radius: 30px;
-    font-size: 16px;
-    font-weight: 700;
-    font-family: LatoRegular, sans-serif;
-    color: #FFF;
-    text-align: center;
-    box-shadow: 3px 3px 8px #B1B1B1, -3px -3px 8px #FFFFFF;
-    transition: 0.5s;
-    margin: 0 auto;
-    margin-top: 150px;
-    background: #7CE199;
-
-    &:hover {
-        background: #96fab3;
-    }
-    &:active {
-        background: #74c28b;
-    };
-`
-
 // Alternate blue-purple color:
-
 // background: #b3abf0;
 // &:hover {
 //     background: #beb5ff;
@@ -136,7 +97,6 @@ const NeumorphicLoginButton = styled.button`
 // }
 
 
-// Alternate shadow color: #B1B1B1
 
 // Change the Login URI so that the domain is chosen depending on the
 // environment that we're in, production and development
@@ -209,7 +169,7 @@ class LoginContainer extends Component {
     // Called after we successfully received the access token, which allows us to retrieve the remaining
     // of the user's information
     authenticateUser = () => {
-        store.dispatch(authenticateUser(true));
+        store.dispatch(authenticateUser());
         
     }
     render() {
