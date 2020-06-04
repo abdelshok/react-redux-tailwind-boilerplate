@@ -4,9 +4,9 @@
   <img alt="Logo" src="https://user-images.githubusercontent.com/20652426/83715972-a235d500-a5fc-11ea-9829-a021c59d045f.png" width="100" />
 </div>
 
-<h2 align="center">
+<h4 align="center">
     A React-Redux-Styled Components boilerplate with Spotify Implicit Grant Authorization already set up in order to jumpstart your Spotify-API based projects.
-</h2>
+</h4>
 
 <div align="center">
   <img alt="lmfaoGif" src="https://user-images.githubusercontent.com/20652426/83715824-4c612d00-a5fc-11ea-9a1e-0866ef263f26.gif"/>
