@@ -28,10 +28,12 @@ const ImageWrapper = styled.div`
     -moz-animation: ${loadingAnimation} 1s ease infinite;
     animation: ${loadingAnimation} 1s ease infinite;
     background-size: ${props => props.imageLoaded ? '100px' :  '50000% 50000%'};
+    opacity: ${props => props.imageLoaded ? '1': '0'};
     display: flex;
     justify-content: center;
     align-items: center;
     box-shadow: 0px 0px 2px #ECF0F3, 0px 0px 0px 5px #ECF0F3, 8px 8px 15px #A7AAAF, -8px -8px 15px #FFFFFF;
+    transition: opacity 2s ease-in;
 `;
 
 const TextWrapper = styled.div`
