@@ -4,8 +4,11 @@
   <img alt="Logo" src="https://user-images.githubusercontent.com/20652426/83715972-a235d500-a5fc-11ea-9829-a021c59d045f.png" width="100" />
 </div>
 
-> A React-Redux-Styled Components boilerplate with Spotify Implicit Grant Authorization already set up in order to jumpstart your Spotify-API based projects.
+<h2 align="center">
+A React-Redux-Styled Components boilerplate with Spotify Implicit Grant Authorization already set up in order to jumpstart your Spotify-API based projects.
+</h2>
 
+/
 <!-- <h4 align="center">
     A React-Redux-Styled Components boilerplate with Spotify Implicit Grant Authorization already set up in order to jumpstart your Spotify-API based projects.
 </h4> -->
