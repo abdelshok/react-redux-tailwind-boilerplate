@@ -30,7 +30,7 @@ These technologies were used:
 
 ### Utility Library
 
-If you look into the ```./utilityLibrary``` folder, you'll find a class called **SpotifyAPI** which wraps, through it's methods, a lot of the different Spotifi Web API endpoints. You simply pass it in your authentication token after logging in (which you can see in the **LoginContainer** file in the ```./container``` folder) and then call any of the methods that you want, .getAlbum, .getAlbumTracks, .getFeaturedPlaylists.
+If you look into the ```./utilityLibrary``` folder, you'll find a class called **SpotifyAPI** which wraps, through it's methods, a lot of the different Spotifi Web API endpoints. You simply pass it your authentication token after logging in (which you can see in the **LoginContainer** file in the ```./container``` folder) and then call any of the methods that you want, .getAlbum, .getAlbumTracks, .getFeaturedPlaylists.
 
 There is about 1,000 lines of code in there, the majority of the API endpoints are wrapped but there's still a few I need to add, but it should still make the process of interacting with the API a lot easier.
 
@@ -55,7 +55,7 @@ The routes are all stored in the ```Routes.js``` file of the ```./routing``` fol
 1. ```UnauthenticatedRoute``` --> Routes that don't require the user to be logged in to be displayed
 2. ```AuthenticatedRoute``` --> Routes that require the user to be logged in to be displayed
 
-The **Authentication state** is stored in the **authentication reducer** in the Redux store. It is passed down as a prop to the ```App.js``` component. Any call to the reducer with the respective action creator will trigger the **isAuthenticated** state to change and will show or hide displays accordingly.
+The **Authentication state** is stored in the **authentication reducer** in the Redux store. It is passed down as a prop to the ```App.js``` component. Any call to the reducer with the respective action creator will trigger the **isAuthenticated** state to change and will show or hide components accordingly.
 
 #### Action Creators
 
@@ -63,7 +63,7 @@ Actions creator functions are all stored in the ```./actionCreators``` file
 
 #### Reducers
 
-Finally, the reducers are all in the ```./reducers``` file, which for now contains two reducers. The authentication reducer, which we've discussed before, and the spotify reducer, which processes spotify-api related actions. For now, the only action available there is **STORE_USER_DATA**, which, as expected, stores the users data upon logging in.
+Finally, the reducers are all in the ```./reducers``` file, which for now contains two reducers. The **authentication reducer**, which we've discussed before, and the **spotify reducer**, which processes spotify-api related actions. For now, the only action available there is **STORE_USER_DATA**, which, as expected, stores the users data upon logging in.
 
 
 ## 🛠 Installation & Set Up
