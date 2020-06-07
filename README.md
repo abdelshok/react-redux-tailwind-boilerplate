@@ -42,7 +42,11 @@ This boilerplate has been set up with React, Styled-Components, Redux, and React
 
 #### React
 
-The React components are subdivided between two folders, ``` ./components```and ```./containers```. Generally, containers refer to "smart" components and components refers to "dumb" components. Dumb here meaning stateless or re-usable. I generally use the containers folder to have my main pages './HomePageContainer', './AboutPageContainer', etc. and keep all the re-usable components that compose these containers in the components folder. When the project grows, the folder structure is usually re-organized for all the related components to be grouped together in new folders.
+The React components are subdivided between two folders, ``` ./components```and ```./containers```. Generally, containers refer to "smart" components and components refers to "dumb" components. Dumb here meaning stateless or re-usable. 
+
+I generally use the containers folder to have my main pages './HomePageContainer', './AboutPageContainer', etc. and keep all the re-usable components that compose these containers in the components folder. 
+
+When the project grows, the folder structure is usually re-organized for all the related components to be grouped together in new folders.
 
 #### Styled-Components
 
