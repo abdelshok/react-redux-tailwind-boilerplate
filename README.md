@@ -26,6 +26,45 @@ These technologies were used:
 - [React-Redux](https://react-redux.js.org/)
 - [Redux](https://redux.js.org/)
 
+## 📖 Documentation 
+
+### Utility Library
+
+If you look into the ```./utilityLibrary``` folder, you'll find a class called **SpotifyAPI** which wraps, through it's methods, a lot of the different Spotifi Web API endpoints. You simply pass it in your authentication token after logging in (which you can see in the **LoginContainer** file in the ```./container``` folder) and then call any of the methods that you want, .getAlbum, .getAlbumTracks, .getFeaturedPlaylists.
+
+There is about 1,000 lines of code in there, the majority of the API endpoints are wrapped but there's still a few I need to add, but it should still make the process of interacting with the API a lot easier.
+
+I'll release the file itself soon enough as an NPM package in itself since I've noticed that the spotify-api NPM package that's currently being the most used isn't really up to date. 
+
+### Folder Structure
+
+This boilerplate has been set up with React, Styled-Components, Redux, and React-Router
+
+#### React
+
+The React components are subdivided between two folders, ``` ./components```and ```./containers```. Generally, containers refer to "smart" components and components refers to "dumb" components. Dumb here meaning stateless or re-usable. I generally use the containers folder to have my main pages './HomePageContainer', './AboutPageContainer', etc. and keep all the re-usable components that compose these containers in the components folder. When the project grows, the folder structure is usually re-organized for all the related components to be grouped together in new folders.
+
+#### Styled-Components
+
+You'll find all of the re-usable components created through Styled-Components in the ```./styledComponents``` folder. If you don't like that name, you can rename it to ```./UILibrary```, ```./coreUILibrary```, whatever makes sense to you.
+
+#### React-Router
+
+The routes are all stored in the ```Routes.js``` file of the ```./routing``` folder. There, you'll find two special components
+
+1. ```UnauthenticatedRoute``` --> Routes that don't require the user to be logged in to be displayed
+2. ```AuthenticatedRoute``` --> Routes that require the user to be logged in to be displayed
+
+The **Authentication state** is stored in the **authentication reducer** in the Redux store. It is passed down as a prop to the ```App.js``` component. Any call to the reducer with the respective action creator will trigger the **isAuthenticated** state to change and will show or hide displays accordingly.
+
+#### Action Creators
+
+Actions creator functions are all stored in the ```./actionCreators``` file
+
+#### Reducers
+
+Finally, the reducers are all in the ```./reducers``` file, which for now contains two reducers. The authentication reducer, which we've discussed before, and the spotify reducer, which processes spotify-api related actions. For now, the only action available there is **STORE_USER_DATA**, which, as expected, stores the users data upon logging in.
+
 
 ## 🛠 Installation & Set Up
 
