@@ -3,18 +3,19 @@
 </div>
 
 <h2 align="center">
-React-Redux Styled Components Boilerplate
+React-Redux Tailwind & Styled-Components Boilerplate
 </h2>
 
 <p align="center">
-A React-Redux-Styled Components boilerplate for any future project
+A React-Redux and Tailwind CSS / Styled Components boilerplate for any future project
 </p>
 
 
 These technologies were used:
 
 - [Create React App](https://github.com/facebook/create-react-app)
-- [Styled Components](https://www.styled-components.com/)
+- [Tailwind](https://www.tailwindcss.com/)
+- [Styled Components](https://www.styled-components.com)
 - [React-Redux](https://react-redux.js.org/)
 - [Redux](https://redux.js.org/)
 
@@ -22,7 +23,7 @@ These technologies were used:
 
 ### Folder Structure
 
-This boilerplate has been set up with React, Styled-Components, Redux, and React-Router
+This boilerplate has been set up with React, Tailwind, Redux, and React-Router
 
 #### React
 
@@ -32,9 +33,13 @@ I generally use the containers folder to have my main pages './HomePageContainer
 
 When the project grows, the folder structure is usually re-organized for all the related components to be grouped together in new folders.
 
-#### Styled-Components
+#### Styled Components
 
-You'll find all of the re-usable components created through Styled-Components in the ```./styledComponents``` folder. If you don't like that name, you can rename it to ```./UILibrary```, ```./coreUILibrary```, whatever makes sense to you.
+Kept Styled Components here in case there are specific re-usable components that we are going to need throughout the application. Might remove it later if necessary and if the bundle size of the application is too large. 
+
+#### Tailwind CSS
+
+Tailwind CSS is a great library for quick iteration and fast development. It's a CSS fraework packed with classes like flex, pt-4, text-center, etc. that allows us to make styling a faster process. 
 
 #### React-Router
 
@@ -77,4 +82,4 @@ Finally, the reducers are all in the ```./reducers``` file, which for now contai
 
 ## Why ⛩
 
-Setting the boilerplate of a project usually takes away from the momentum of a good idea. Lost momentum might lead to a loss in productivity. I don't need this in my life.
+Setting the boilerplate of a project usually takes away from the momentum of a good idea. Lost momentum might lead to a loss in productivity. More importantly, lost momentum is simply lost energy, lost positivity, it's just annoying. I don't need this in my life. This should allow me to jump start any project in the future.
